@@ -1,0 +1,111 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+&rsaquo; <a href="{% url 'admin:app_list' app_label='books' %}">Books</a>
+&rsaquo; <a href="{% url 'admin:books_book_changelist' %}">Books</a>
+&rsaquo; {% trans 'Bulk Upload' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="module">
+        <h2>{% trans 'Bulk Upload Books' %}</h2>
+        
+        <div class="help">
+            <p>{% trans 'Upload multiple books at once using a CSV file and optionally a ZIP file containing cover images.' %}</p>
+        </div>
+        
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <fieldset class="module aligned">
+                <div class="form-row">
+                    <div>
+                        <label for="{{ form.csv_file.id_for_label }}">{{ form.csv_file.label }}:</label>
+                        {{ form.csv_file }}
+                        <div class="help">{{ form.csv_file.help_text }}</div>
+                        {% if form.csv_file.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.csv_file.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div>
+                        <label for="{{ form.images_zip.id_for_label }}">{{ form.images_zip.label }}:</label>
+                        {{ form.images_zip }}
+                        <div class="help">{{ form.images_zip.help_text }}</div>
+                        {% if form.images_zip.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.images_zip.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </fieldset>
+            
+            <div class="submit-row">
+                <input type="submit" value="{% trans 'Upload Books' %}" class="default">
+                <a href="{% url 'admin:books_book_changelist' %}" class="button cancel-link">{% trans 'Cancel' %}</a>
+            </div>
+        </form>
+        
+        <div class="module">
+            <h3>{% trans 'CSV File Format' %}</h3>
+            <p>{% trans 'Your CSV file should include the following columns:' %}</p>
+            <ul>
+                <li><strong>title</strong> - Book title (required)</li>
+                <li><strong>author</strong> - Author name (required)</li>
+                <li><strong>description</strong> - Book description</li>
+                <li><strong>price</strong> - Price (numeric, e.g., 19.99)</li>
+                <li><strong>isbn</strong> - ISBN number (required, unique)</li>
+                <li><strong>publisher</strong> - Publisher name</li>
+                <li><strong>publication_date</strong> - Publication date (YYYY-MM-DD)</li>
+                <li><strong>pages</strong> - Number of pages</li>
+                <li><strong>language</strong> - Language (default: English)</li>
+                <li><strong>stock</strong> - Stock quantity (default: 0)</li>
+                <li><strong>book_type</strong> - Classification: small_books, charts, or big_books</li>
+            </ul>
+            
+            <h4>{% trans 'Sample CSV Format:' %}</h4>
+            <pre>title,author,description,price,isbn,publisher,publication_date,pages,language,stock,book_type
+"The Little Book","John Smith","A small book for quick reading",9.99,"1234567890","Small Books Pub","2023-01-15",120,"English",50,small_books
+"Learning Charts","Jane Doe","Educational charts for students",15.99,"0987654321","Charts Publisher","2023-02-20",50,"English",30,charts
+"Big Story Book","Mike Johnson","Large format book for classrooms",25.99,"5555666677","Big Books Co","2023-03-10",200,"English",20,big_books</pre>
+        </div>
+        
+        <div class="module">
+            <h3>{% trans 'Image Upload Guidelines' %}</h3>
+            <p>{% trans 'For cover images:' %}</p>
+            <ul>
+                <li>{% trans 'Upload images in a ZIP file' %}</li>
+                <li>{% trans 'Supported formats: JPG, JPEG, PNG, GIF' %}</li>
+                <li>{% trans 'Name images using ISBN or title for automatic matching' %}</li>
+                <li>{% trans 'Example: 1234567890.jpg or "The Little Book.jpg"' %}</li>
+                <li>{% trans 'Images will be automatically matched to books by filename' %}</li>
+            </ul>
+        </div>
+        
+        <div class="module">
+            <h3>{% trans 'Draft and Classification' %}</h3>
+            <p>{% trans 'After upload:' %}</p>
+            <ul>
+                <li>{% trans 'Books are created with their specified classification (small_books, charts, big_books)' %}</li>
+                <li>{% trans 'Use admin actions to mark books as draft or publish them' %}</li>
+                <li>{% trans 'Filter books by classification to manage specific categories' %}</li>
+                <li>{% trans 'Edit individual books to add additional details or images' %}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

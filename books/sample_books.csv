@@ -1,0 +1,7 @@
+title,author,description,price,isbn,publisher,publication_date,pages,language,stock,book_type
+"The Little Book","John Smith","A small book for quick reading and travel",9.99,"1234567890","Small Books Pub","2023-01-15",120,"English",50,small_books
+"Compact Guide","Jane Doe","Portable reference guide",12.99,"1234567891","Quick Guides","2023-02-20",80,"English",30,small_books
+"Learning Charts","Mike Johnson","Educational charts and diagrams for students",15.99,"0987654321","Charts Publisher","2023-03-10",50,"English",40,charts
+"Mathematics Charts","Sarah Brown","Mathematical reference charts",18.99,"0987654322","Math Press","2023-04-15",60,"English",25,charts
+"Big Story Book","Tom Wilson","Large format book for classroom reading",25.99,"5555666677","Big Books Co","2023-05-20",200,"English",20,big_books
+"Giant Picture Book","Emily Davis","Oversized picture book for group reading",29.99,"5555666678","Picture Books","2023-06-25",150,"English",15,big_books

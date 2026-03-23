@@ -1,0 +1,117 @@
+{% extends 'books/base.html' %}
+
+{% block title %}Shopping Cart - Bookstore{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">Shopping Cart</h1>
+    
+    {% if cart_items %}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="px-6 py-4 bg-gray-50 border-b">
+                        <h2 class="text-lg font-semibold text-gray-900">Cart Items ({{ total_items }})</h2>
+                    </div>
+                    
+                    <div class="divide-y divide-gray-200">
+                        {% for item in cart_items %}
+                        <div class="p-6">
+                            <div class="flex items-center space-x-4">
+                                {% if item.book.cover_image %}
+                                    <img src="{{ item.book.cover_image.url }}" alt="{{ item.book.title }}" class="w-20 h-28 object-cover rounded">
+                                {% else %}
+                                    <div class="w-20 h-28 bg-gray-200 rounded flex items-center justify-center">
+                                        <span class="text-gray-500 text-xs">No Cover</span>
+                                    </div>
+                                {% endif %}
+                                
+                                <div class="flex-1">
+                                    <h3 class="text-lg font-semibold text-gray-900" style="color: #1e3a8a;">{{ item.book.title }}</h3>
+                                    <p class="text-gray-600">by {{ item.book.author }}</p>
+                                    <p class="text-gray-500 text-sm">ISBN: {{ item.book.isbn }}</p>
+                                    <p class="text-indigo-600 font-semibold mt-2">R{{ item.book.price }} each</p>
+                                </div>
+                                
+                                <div class="flex items-center space-x-4">
+                                    <form action="{% url 'update_cart' item.id %}" method="post" class="flex items-center space-x-2">
+                                        {% csrf_token %}
+                                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.book.stock }}" 
+                                               class="w-16 px-2 py-1 border border-gray-300 rounded text-center">
+                                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">
+                                            Update
+                                        </button>
+                                    </form>
+                                    
+                                    <div class="text-right">
+                                        <p class="text-lg font-semibold text-gray-900">R{{ item.sub_total }}</p>
+                                        <a href="{% url 'remove_from_cart' item.id %}" 
+                                           class="text-red-600 hover:text-red-800 text-sm"
+                                           onclick="return confirm('Are you sure you want to remove this item?')">
+                                            Remove
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden sticky top-4">
+                    <div class="px-6 py-4 bg-gray-50 border-b">
+                        <h2 class="text-lg font-semibold text-gray-900">Order Summary</h2>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div class="space-y-3 mb-6">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Subtotal ({{ total_items }} items)</span>
+                                <span class="font-semibold">R{{ total }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Shipping</span>
+                                <span class="font-semibold text-green-600">Free</span>
+                            </div>
+                            <div class="border-t pt-3">
+                                <div class="flex justify-between text-lg">
+                                    <span class="font-bold">Total</span>
+                                    <span class="font-bold text-indigo-600">R{{ total }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <a href="{% url 'checkout' %}" 
+                               class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg text-center block">
+                                Proceed to Checkout
+                            </a>
+                            <a href="{% url 'book_list' %}" 
+                               class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-4 rounded-lg text-center block">
+                                Continue Shopping
+                            </a>
+                        </div>
+                        
+                        <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                            <h3 class="font-semibold text-blue-900 mb-2">🎉 Special Offer!</h3>
+                            <p class="text-sm text-blue-800">Free shipping on all orders. No minimum purchase required!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="text-center py-12">
+            <div class="text-gray-400 text-6xl mb-4">🛒</div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">Your cart is empty</h3>
+            <p class="text-gray-600 mb-6">Looks like you haven't added any books to your cart yet.</p>
+            <a href="{% url 'book_list' %}" 
+               class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg">
+                Start Shopping
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

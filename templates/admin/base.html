@@ -1,0 +1,33 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+/* Django Admin Header - Only change navigation header background color */
+#header {
+    background-color: #1e3a8a !important;
+    border-bottom: 1px solid #1e3a8a !important;
+}
+
+#header h1, #header h1 a {
+    color: white !important;
+}
+
+#header .user-tools a {
+    color: white !important;
+}
+
+#header .user-tools a:hover {
+    color: #87CEEB !important;
+}
+
+/* Only Authentication and Authorization container - not all modules */
+.app-auth .module h2,
+.module h2:contains("Authentication"),
+.module h2:contains("Authorization") {
+    background-color: #1e3a8a !important;
+    color: white !important;
+    border: 1px solid #1e3a8a !important;
+}
+</style>
+{% endblock %}

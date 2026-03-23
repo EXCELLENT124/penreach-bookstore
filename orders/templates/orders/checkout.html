@@ -1,0 +1,147 @@
+{% extends 'books/base.html' %}
+
+{% block title %}Checkout - Bookstore{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">Shipping Information</h2>
+                
+                {% if not user.is_authenticated %}
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                        <p class="text-yellow-800">
+                            <strong>Note:</strong> You can checkout as a guest or 
+                            <a href="{% url 'login' %}" class="text-indigo-600 hover:text-indigo-800">login</a> 
+                            for a faster checkout experience.
+                        </p>
+                    </div>
+                {% endif %}
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="{{ form.full_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                Full Name *
+                            </label>
+                            {{ form.full_name }}
+                            {% if form.full_name.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.full_name.errors }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <div>
+                            <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                Email Address *
+                            </label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.email.errors }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <div>
+                            <label for="{{ form.phone.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                Phone Number *
+                            </label>
+                            {{ form.phone }}
+                            {% if form.phone.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.phone.errors }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="md:col-span-2">
+                            <label for="{{ form.address.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                Delivery Address *
+                            </label>
+                            {{ form.address }}
+                            {% if form.address.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.address.errors }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-3">
+                                Delivery Method *
+                            </label>
+                            <div class="flex space-x-6">
+                                {% for choice in form.delivery_method %}
+                                <label class="flex items-center cursor-pointer">
+                                    {{ choice.tag }}
+                                    <span class="ml-2 text-gray-700">{{ choice.choice_label }}</span>
+                                </label>
+                                {% endfor %}
+                            </div>
+                            {% if form.delivery_method.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.delivery_method.errors }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8">
+                        <button type="submit" 
+                                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg">
+                            Place Order
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden sticky top-4" style="border: 3px solid skyblue;">
+                <div class="px-6 py-4 bg-gray-50 border-b">
+                    <h2 class="text-lg font-semibold text-gray-900">Order Summary</h2>
+                </div>
+                
+                <div class="p-6">
+                    <div class="space-y-3 mb-6">
+                        {% for item in cart_items %}
+                        <div class="flex justify-between items-center py-2 border-b">
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-gray-900" style="color: #1e3a8a;">{{ item.book.title }}</p>
+                                <p class="text-xs text-gray-500">by {{ item.book.author }} ({{ item.quantity }})</p>
+                            </div>
+                            <span class="text-sm font-semibold">R{{ item.sub_total }}</span>
+                        </div>
+                        {% endfor %}
+                        
+                        <div class="pt-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Subtotal ({{ total_items }} items)</span>
+                                <span class="font-semibold">R{{ total }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Shipping</span>
+                                <span class="font-semibold text-green-600">Free</span>
+                            </div>
+                            <div class="border-t pt-3">
+                                <div class="flex justify-between text-lg">
+                                    <span class="font-bold">Total</span>
+                                    <span class="font-bold text-indigo-600">R{{ total }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-blue-50 rounded-lg p-4">
+                        <h3 class="font-semibold text-blue-900 mb-2">📦 Delivery Options</h3>
+                        <ul class="text-sm text-blue-800 space-y-1">
+                            <li>• Free delivery on all orders</li>
+                            <li>• 3-5 business days delivery</li>
+                            <li>• Or collect at our store (Boschrand Farm, R40, Nelspruit)</li>
+                            <li>• Order confirmation via email</li>
+                            <li>• Track your order status</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

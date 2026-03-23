@@ -1,0 +1,169 @@
+/* Penreach Bookshop Styles */
+
+/* Body and general layout */
+body {
+    background-color: #f9fafb;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Navigation */
+nav {
+    background-color: #1e3a8a !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Navigation container */
+.nav-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* Navigation flex layout */
+.nav-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 4rem;
+}
+
+/* Logo section */
+.logo-section {
+    display: flex;
+    align-items: center;
+}
+
+.logo-link {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.logo-image {
+    height: 2.5rem;
+    width: auto;
+    margin-right: 0.75rem;
+}
+
+/* Navigation links */
+.nav-items {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.nav-link {
+    color: #e5e7eb;
+    text-decoration: none;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: color 0.2s ease-in-out;
+}
+
+.nav-link:hover {
+    color: #ffffff;
+}
+
+/* Button styles */
+.btn-signup {
+    background-color: #4f46e5;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.btn-signup:hover {
+    background-color: #4338ca;
+}
+
+.btn-logout {
+    background-color: #dc2626;
+    color: #ffffff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.btn-logout:hover {
+    background-color: #b91c1c;
+}
+
+/* Main content */
+main {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem;
+}
+
+/* Messages */
+.message {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-radius: 0.375rem;
+}
+
+.message-success {
+    background-color: #f0fdf4;
+    color: #166534;
+}
+
+.message-error {
+    background-color: #fef2f2;
+    color: #991b1b;
+}
+
+.message-info {
+    background-color: #eff6ff;
+    color: #1e40af;
+}
+
+/* Footer */
+footer {
+    background-color: #1e3a8a;
+    color: #ffffff;
+    margin-top: 3rem;
+}
+
+.footer-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.footer-content {
+    text-align: center;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .nav-flex {
+        flex-direction: column;
+        height: auto;
+        padding: 1rem 0;
+    }
+    
+    .nav-items {
+        margin-top: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .logo-image {
+        height: 2rem;
+    }
+}

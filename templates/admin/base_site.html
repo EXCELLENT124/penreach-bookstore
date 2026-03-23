@@ -1,0 +1,11 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+/* Only change navigation header background color */
+#header {
+    background-color: #1e3a8a !important;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,461 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Penreach Bookshop{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .chatbot-window {
+            width: 350px;
+            height: 500px;
+            display: none;
+            flex-direction: column;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        .chat-input-container {
+            padding: 10px;
+            border-top: 1px solid #e5e7eb;
+        }
+        /* Chatbot Message Styling */
+        .chat-bubble {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            margin-bottom: 12px;
+            position: relative;
+            word-wrap: break-word;
+        }
+        
+        .user-message {
+            background-color: #1e3a8a;
+            color: white;
+            border: 2px solid skyblue;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .user-message::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: -8px;
+            width: 0;
+            height: 0;
+            border: 8px solid transparent;
+            border-left-color: #1e3a8a;
+            border-right: 0;
+            border-bottom: 0;
+        }
+        
+        .user-message::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: -10px;
+            width: 0;
+            height: 0;
+            border: 10px solid transparent;
+            border-left-color: skyblue;
+            border-right: 0;
+            border-bottom: 0;
+        }
+        
+        .bot-message {
+            background-color: white;
+            color: #1e3a8a;
+            border: 2px solid #1e3a8a;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .bot-message::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: -8px;
+            width: 0;
+            height: 0;
+            border: 8px solid transparent;
+            border-right-color: white;
+            border-left: 0;
+            border-bottom: 0;
+        }
+        
+        .bot-message::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: -10px;
+            width: 0;
+            height: 0;
+            border: 10px solid transparent;
+            border-right-color: #1e3a8a;
+            border-left: 0;
+            border-bottom: 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50" style="background-color: white;">
+    <nav class="bg-white shadow-lg" style="background-color: #1e3a8a; border-top: 3px solid skyblue; border-bottom: 3px solid skyblue;">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="{% url 'home' %}" class="flex items-center space-x-2 text-xl font-bold" style="color: orange; font-family: 'Monotype Corsiva', serif;">
+                        <svg class="w-6 h-6" fill="orange" viewBox="0 0 24 24">
+                            <path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/>
+                        </svg>
+                        <span>Books in Homes</span>
+                        <svg class="w-5 h-5" fill="orange" viewBox="0 0 24 24">
+                            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                        </svg>
+                    </a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="px-2 py-1 rounded-md border-2" style="border-color: orange;">
+                        <a href="{% url 'home' %}" class="text-white hover:text-gray-200 px-2 py-1 rounded-md text-sm font-medium" style="color: orange;">
+                                <svg class="w-4 h-4 inline mr-1" fill="orange" viewBox="0 0 24 24">
+                                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                                </svg>
+                                Home
+                            </a>
+                    </div>
+                    <div class="px-2 py-1 rounded-md border-2" style="border-color: orange;">
+                        <a href="{% url 'book_list' %}" class="text-white hover:text-gray-200 px-2 py-1 rounded-md text-sm font-medium" style="color: orange;">
+                                <svg class="w-4 h-4 inline mr-1" fill="orange" viewBox="0 0 24 24">
+                                    <path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/>
+                                </svg>
+                                Books
+                            </a>
+                    </div>
+                    
+                    {% if user.is_authenticated %}
+                        <div class="px-2 py-1 rounded-md border-2" style="border-color: orange;">
+                            <a href="{% url 'cart_view' %}" class="text-white hover:text-gray-200 px-2 py-1 rounded-md text-sm font-medium" style="color: orange;">
+                                <svg class="w-4 h-4 inline mr-1" fill="orange" viewBox="0 0 24 24">
+                                    <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+                                </svg>
+                                Cart ({{ cart_count }})
+                            </a>
+                        </div>
+                        <div class="px-2 py-1 rounded-md border-2" style="border-color: red;">
+                            <a href="{% url 'wishlist_view' %}" class="text-white hover:text-gray-200 px-2 py-1 rounded-md text-sm font-medium" style="color: red;">
+                                <svg class="w-4 h-4 inline mr-1" fill="red" viewBox="0 0 24 24">
+                                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                </svg>
+                                Wishlist
+                            </a>
+                        </div>
+                        <span class="text-white px-3 py-2 rounded-md text-sm font-medium" style="color: orange;">Welcome, {{ user.full_name|default:user.username }}</span>
+                        <form action="{% url 'logout' %}" method="post" class="inline">
+                            {% csrf_token %}
+                            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                                Logout
+                            </button>
+                        </form>
+                    {% else %}
+                        <div class="px-2 py-1 rounded-md border-2" style="border-color: orange;">
+                            <a href="{% url 'login' %}" class="text-white hover:text-gray-200 px-2 py-1 rounded-md text-sm font-medium" style="color: orange;">
+                                <svg class="w-4 h-4 inline mr-1" fill="orange" viewBox="0 0 24 24">
+                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                </svg>
+                                Login
+                            </a>
+                        </div>
+                                                <div class="px-2 py-1 rounded-md border-2" style="border-color: green;">
+                            <a href="{% url 'signup' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-2 py-1 rounded-md text-sm font-medium" style="background-color: green; border-color: green;">
+                                <svg class="w-4 h-4 inline mr-1" fill="white" viewBox="0 0 24 24">
+                                    <path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                </svg>
+                                Sign Up
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="mb-4 p-4 rounded-md {% if message.tags == 'success' %}bg-green-100 text-green-700{% elif message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Chatbot Widget -->
+    <div class="chatbot-container">
+        <!-- Chat Button -->
+        <button id="chatbot-toggle" class="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 shadow-lg transition-all duration-300 hover:scale-110" style="background-color: #1e3a8a; border: 3px solid skyblue;">
+            <svg class="w-6 h-6" fill="orange" viewBox="0 0 24 24">
+                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+            </svg>
+        </button>
+        
+        <!-- Chat Window -->
+        <div id="chatbot-window" class="chatbot-window bg-white rounded-lg shadow-2xl border border-gray-200" style="border: 3px solid skyblue;">
+            <!-- Chat Header -->
+            <div class="bg-blue-600 text-white p-4 rounded-t-lg flex justify-between items-center" style="background-color: #1e3a8a;">
+                <div class="flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="white" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    <span class="font-semibold">Bookshop Assistant</span>
+                </div>
+                <button id="chatbot-close" class="text-white hover:text-gray-200">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Chat Messages -->
+            <div id="chat-messages" class="chat-messages" style="border: 2px solid #1e3a8a; margin: 10px; border-radius: 8px;">
+                <div class="chat-bubble bot-message">
+                    👋 Hello! Welcome to Penreach Bookshop! I'm here to help you with:
+                    <br><br>
+                    📚 Finding books<br>
+                    🛒 Placing orders<br>
+                    📦 Delivery information<br>
+                    💳 Payment questions<br>
+                    📞 Customer service<br><br>
+                    How can I assist you today?
+                </div>
+            </div>
+            
+            <!-- Chat Input -->
+            <div class="chat-input-container">
+                <div class="flex space-x-2">
+                    <input type="text" id="chat-input" placeholder="Type your message..." 
+                           class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" style="border-color: #1e3a8a;">
+                    <button id="chat-send" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md" style="background-color: #1e3a8a;">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l9-9z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/main.js' %}"></script>
+    <script>
+        // Chatbot functionality
+        const chatbotToggle = document.getElementById('chatbot-toggle');
+        const chatbotWindow = document.getElementById('chatbot-window');
+        const chatbotClose = document.getElementById('chatbot-close');
+        const chatInput = document.getElementById('chat-input');
+        const chatSend = document.getElementById('chat-send');
+        const chatMessages = document.getElementById('chat-messages');
+
+        // Toggle chat window
+        chatbotToggle.addEventListener('click', () => {
+            chatbotWindow.style.display = chatbotWindow.style.display === 'flex' ? 'none' : 'flex';
+        });
+
+        // Close chat window
+        chatbotClose.addEventListener('click', () => {
+            chatbotWindow.style.display = 'none';
+        });
+
+        // Chat responses
+        const botResponses = {
+            'order': 'To place an order: 1) Browse books, 2) Add to cart, 3) Checkout. Need help with any step?',
+            'delivery': 'We offer free delivery on all orders! Standard delivery takes 3-5 business days. Express delivery available for urgent orders.',
+            'payment': 'We accept credit/debit cards, EFT, and cash on delivery. All payments are secure and encrypted.',
+            'contact': 'You can reach us at: 📞 012 345 6789 or 📧 info@penreachbookshop.com',
+            'return': 'Our return policy: 30-day returns for unused books in original condition. Contact us for return authorization.',
+            'search': 'Use the search bar at the top to find books by title, author, or ISBN. You can also look for Small Books, Charts, or Big Books on our home page!',
+            'help': 'I can help with: ordering, delivery, payment, returns, book search, book categories, and account questions. What do you need?',
+            'small books': '📖 Looking for Small Books? You can find them right on our home page in the Featured Books section! They\'re compact and portable books perfect for quick reading and travel. Just scroll down to see all three categories: Small Books, Charts, and Big Books!',
+            'small book': '📖 Looking for Small Books? You can find them right on our home page in the Featured Books section! They\'re compact and portable books perfect for quick reading and travel. Just scroll down to see all three categories: Small Books, Charts, and Big Books!',
+            'compact books': '📖 Looking for Compact Books? You can find Small Books right on our home page in the Featured Books section! They\'re perfect for quick reading and travel. Just scroll down to see all three categories: Small Books, Charts, and Big Books!',
+            'charts': '📊 Looking for Charts? You can find them right on our home page in the Featured Books section! They\'re educational charts and diagrams perfect for learning and reference. Just scroll down to see all three categories: Small Books, Charts, and Big Books!',
+            'educational charts': '📊 Looking for Educational Charts? You can find them right on our home page in the Featured Books section! They\'re perfect for learning and reference. Just scroll down to see all three categories: Small Books, Charts, and Big Books!',
+            'diagrams': '📊 Looking for Diagrams? You can find Charts right on our home page in the Featured Books section! They\'re educational charts and diagrams perfect for learning and reference. Just scroll down to see all three categories: Small Books, Charts, and Big Books!',
+            'big books': '📚 Looking for Big Books? You can find them right on our home page in the Featured Books section! They\'re large format books ideal for classroom use and group reading. Just scroll down to see all three categories: Small Books, Charts, and Big Books!',
+            'big book': '📚 Looking for Big Books? You can find them right on our home page in the Featured Books section! They\'re large format books ideal for classroom use and group reading. Just scroll down to see all three categories: Small Books, Charts, and Big Books!',
+            'large books': '📚 Looking for Large Books? You can find Big Books right on our home page in the Featured Books section! They\'re ideal for classroom use and group reading. Just scroll down to see all three categories: Small Books, Charts, and Big Books!',
+            'classroom books': '📚 Looking for Classroom Books? You can find Big Books right on our home page in the Featured Books section! They\'re large format books ideal for classroom use and group reading. Just scroll down to see all three categories: Small Books, Charts, and Big Books!',
+            'categories': '📚 You can find all our book categories right on the home page! Just scroll down to the Featured Books section where you\'ll see: 📖 Small Books (compact & portable), 📊 Charts (educational diagrams), and 📚 Big Books (large format for classroom). Each category has its own section to browse!',
+            'category': '📚 You can find all our book categories right on the home page! Just scroll down to the Featured Books section where you\'ll see: 📖 Small Books (compact & portable), 📊 Charts (educational diagrams), and 📚 Big Books (large format for classroom). Each category has its own section to browse!',
+            'featured books': '📚 Our Featured Books are displayed right on the home page! Just scroll down to see three categories: 📖 Small Books, 📊 Charts, and 📚 Big Books. Each category offers unique books for different needs - you can\'t miss them!',
+            'types of books': '📚 You can see all our book types right on the home page! Just scroll down to the Featured Books section to find: 📖 Small Books for quick reading, 📊 Charts for educational purposes, and 📚 Big Books for classroom/group use. Each category is clearly displayed!',
+            'book types': '📚 You can see all our book types right on the home page! Just scroll down to the Featured Books section to find: 📖 Small Books for quick reading, 📊 Charts for educational purposes, and 📚 Big Books for classroom/group use. Each category is clearly displayed!',
+            'home page': '🏠 Our home page has everything you need! You\'ll find the Featured Books section with three categories: 📖 Small Books, 📊 Charts, and 📚 Big Books. Just scroll down to see all our book types organized by category!',
+            'where': '📍 Looking for something specific? Check our home page! Scroll down to the Featured Books section where you\'ll find three categories: 📖 Small Books, 📊 Charts, and 📚 Big Books. Each category is clearly displayed for easy browsing!'
+        };
+
+        function addMessage(message, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-bubble ${isUser ? 'user-message' : 'bot-message'}`;
+            messageDiv.innerHTML = message;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function getBotResponse(userMessage) {
+            const lowerMessage = userMessage.toLowerCase();
+            
+            // Check for greetings first
+            const greetings = ['hello', 'hi', 'hey', 'good day', 'good morning', 'good afternoon', 'good evening', 'greetings', 'howdy'];
+            const isGreeting = greetings.some(greeting => lowerMessage.includes(greeting));
+            
+            if (isGreeting) {
+                // Get user info from template variables
+                var isAuthenticated = false;
+                var userName = '';
+                
+                // Set user info from Django template
+                {% if user.is_authenticated %}
+                    isAuthenticated = true;
+                    userName = "{{ user.full_name|default:user.username|escapejs }}";
+                {% endif %}
+                
+                if (isAuthenticated && userName) {
+                    return 'Hi ' + userName + '! Welcome to Penreach Bookshop! How can I assist you today?';
+                } else {
+                    return 'Hi! Welcome to Penreach Bookshop! How can I assist you today?';
+                }
+            }
+            
+            for (const [key, response] of Object.entries(botResponses)) {
+                if (lowerMessage.includes(key)) {
+                    return response;
+                }
+            }
+            
+            // Default response
+            return 'I can help you with ordering books, delivery info, payment questions, book categories (Small Books, Charts, Big Books), and more. Try asking about: small books, charts, big books, categories, order, delivery, payment, contact, return, search, or help.';
+        }
+
+        function sendMessage() {
+            const message = chatInput.value.trim();
+            if (message) {
+                addMessage(message, true);
+                
+                // Simulate bot thinking
+                setTimeout(() => {
+                    const response = getBotResponse(message);
+                    addMessage(response);
+                }, 1000);
+                
+                chatInput.value = '';
+            }
+        }
+
+        // Send message on button click
+        chatSend.addEventListener('click', sendMessage);
+
+        // Send message on Enter key
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+
+    <!-- Footer -->
+    <footer class="text-white mt-12" style="background-color: #1e3a8a;">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-0">
+                <!-- Contact Us Section -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4" style="color: skyblue;">Contact Us</h3>
+                    <div class="space-y-2">
+                        <div class="flex items-center space-x-2">
+                            <svg class="w-5 h-5" fill="skyblue" viewBox="0 0 24 24">
+                                <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                            </svg>
+                            <span class="text-sm">Call: +27(0)13 758 9000</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <svg class="w-5 h-5" fill="skyblue" viewBox="0 0 24 24">
+                                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                            </svg>
+                            <span class="text-sm">Email: penreach@penreach.co.za</span>
+                        </div>
+                        <div class="flex items-start space-x-2">
+                            <svg class="w-5 h-5 mt-1" fill="skyblue" viewBox="0 0 24 24">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                            </svg>
+                            <span class="text-sm">Address: Penreach, Boschrand Farm, R40, Nelspruit</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Social Media Section -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4" style="color: skyblue;">Follow Us</h3>
+                    <div class="flex space-x-4">
+                        {% if facebook_url %}
+                        <a href="{{ facebook_url }}" target="_blank" class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors">
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                            </svg>
+                        </a>
+                        {% else %}
+                        <a href="https://www.facebook.com/penreachbookshop" target="_blank" class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors">
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                            </svg>
+                        </a>
+                        {% endif %}
+                        {% if twitter_url %}
+                        <a href="{{ twitter_url }}" target="_blank" class="w-10 h-10 bg-sky-500 rounded-full flex items-center justify-center hover:bg-sky-600 transition-colors">
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                            </svg>
+                        </a>
+                        {% else %}
+                        <a href="https://www.twitter.com/penreachbookshop" target="_blank" class="w-10 h-10 bg-sky-500 rounded-full flex items-center justify-center hover:bg-sky-600 transition-colors">
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                            </svg>
+                        </a>
+                        {% endif %}
+                        {% if whatsapp_url %}
+                        <a href="{{ whatsapp_url }}" target="_blank" class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center hover:bg-green-600 transition-colors">
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.149-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.123-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86  0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                            </svg>
+                        </a>
+                        {% else %}
+                        <a href="https://wa.me/27137589000" target="_blank" class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center hover:bg-green-600 transition-colors">
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.149-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.123-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86  0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                            </svg>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Store Info Section -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4" style="color: skyblue;">Penreach Bookshop</h3>
+                    <p class="text-sm text-gray-300 mb-2">Your trusted source for quality educational and recreational books.</p>
+                    <p class="text-sm text-gray-300">Open Monday - Friday: 8:00 AM - 4:00 PM</p>
+                </div>
+            </div>
+    </footer>
+
+</body>
+</html>

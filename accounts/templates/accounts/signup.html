@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Bookstore</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100" style="background-color: skyblue;">
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8">
+            <!-- Signup Container -->
+            <div class="bg-white rounded-lg shadow-lg p-8 border-4" style="border-color: #1e3a8a;">
+                <div>
+                    <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                        Create your account
+                    </h2>
+                    <p class="mt-2 text-center text-sm text-gray-600">
+                        Or
+                        <a href="{% url 'login' %}" class="font-medium text-indigo-600 hover:text-indigo-500">
+                            sign in to your existing account
+                        </a>
+                    </p>
+                </div>
+                <form class="mt-8 space-y-6" method="post">
+                    {% csrf_token %}
+                    {% if form.errors %}
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+                    <div class="space-y-4">
+                        <div>
+                            <label for="id_username" class="block text-sm font-medium text-gray-700">Username</label>
+                            <input id="id_username" name="username" type="text" required 
+                                   class="mt-1 appearance-none relative block w-full px-3 py-2 border placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 sm:text-sm" 
+                                   style="border-color: #1e3a8a;"
+                                   placeholder="Username">
+                            {% if form.username.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.username.errors }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <div>
+                            <label for="id_email" class="block text-sm font-medium text-gray-700">Email</label>
+                            <input id="id_email" name="email" type="email" required 
+                                   class="mt-1 appearance-none relative block w-full px-3 py-2 border placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 sm:text-sm" 
+                                   style="border-color: #1e3a8a;"
+                                   placeholder="Email address">
+                            {% if form.email.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.email.errors }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <div>
+                            <label for="id_full_name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                            <input id="id_full_name" name="full_name" type="text" required 
+                                   class="mt-1 appearance-none relative block w-full px-3 py-2 border placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 sm:text-sm" 
+                                   style="border-color: #1e3a8a;"
+                                   placeholder="Full Name">
+                            {% if form.full_name.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.full_name.errors }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <div>
+                            <label for="id_phone" class="block text-sm font-medium text-gray-700">Phone (Optional)</label>
+                            <input id="id_phone" name="phone" type="text" 
+                                   class="mt-1 appearance-none relative block w-full px-3 py-2 border placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 sm:text-sm" 
+                                   style="border-color: #1e3a8a;"
+                                   placeholder="Phone number">
+                            {% if form.phone.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.phone.errors }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <div>
+                            <label for="id_address" class="block text-sm font-medium text-gray-700">Address</label>
+                            <textarea id="id_address" name="address" required rows="3"
+                                      class="mt-1 appearance-none relative block w-full px-3 py-2 border placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 sm:text-sm" 
+                                      style="border-color: #1e3a8a;"
+                                      placeholder="Your full address"></textarea>
+                            {% if form.address.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.address.errors }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <div>
+                            <label for="id_password1" class="block text-sm font-medium text-gray-700">Password</label>
+                            <input id="id_password1" name="password1" type="password" required 
+                                   class="mt-1 appearance-none relative block w-full px-3 py-2 border placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 sm:text-sm" 
+                                   style="border-color: #1e3a8a;"
+                                   placeholder="Password">
+                            {% if form.password1.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.password1.errors }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <div>
+                            <label for="id_password2" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                            <input id="id_password2" name="password2" type="password" required 
+                                   class="mt-1 appearance-none relative block w-full px-3 py-2 border placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 sm:text-sm" 
+                                   style="border-color: #1e3a8a;"
+                                   placeholder="Confirm password">
+                            {% if form.password2.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.password2.errors }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div>
+                        <button type="submit" 
+                                class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Sign up
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

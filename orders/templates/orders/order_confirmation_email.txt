@@ -1,0 +1,53 @@
+Subject: Order Confirmation - {{ order.order_number }}
+
+Dear {{ order.full_name }},
+
+Thank you for your order from Penreach Bookshop! We have received your order and it will be processed shortly.
+
+Order Details:
+================
+Order Number: {{ order.order_number }}
+Order Date: {{ order.created_at|date:"F d, Y" }}
+Delivery Method: {{ order.get_delivery_method_display }}
+
+Items Ordered:
+{% for item in order.items.all %}- {{ item.book_title }} by {{ item.book_author }} (Qty: {{ item.quantity }}) - R{{ item.sub_total }}
+{% endfor %}
+
+Total Amount: R{{ order.total_amount }}
+
+{% if order.delivery_method == 'delivery' %}
+Shipping Information:
+================
+Name: {{ order.full_name }}
+Address: {{ order.address }}
+Phone: {{ order.phone }}
+{% else %}
+Collection Information:
+================
+Name: {{ order.full_name }}
+Phone: {{ order.phone }}
+
+You can collect your order at:
+Penreach Bookshop
+Boschrand Farm, R40, Nelspruit
+
+Please bring your order number ({{ order.order_number }}) when collecting.
+{% endif %}
+
+Order Status: {{ order.get_status_display }}
+
+{% if order.delivery_method == 'delivery' %}
+We will send you another email once your order has been shipped.
+{% else %}
+We will notify you when your order is ready for collection.
+{% endif %}
+
+If you have any questions about your order, please contact us at:
+Email: penreach@penreach.co.za
+Phone: +27(0)13 758 9000
+
+Thank you for shopping with Penreach Bookshop!
+
+Best regards,
+The Penreach Bookshop Team
