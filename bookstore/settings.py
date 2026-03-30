@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'orders',
     'admin_dashboard',
     'wishlist',
+    'analytics',
     'bookstore',  # Add bookstore app for settings
 ]
 
@@ -54,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'analytics.middleware.VisitorTrackingMiddleware',
 ]
 
 ROOT_URLCONF = 'bookstore.urls'
@@ -69,6 +71,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'cart.context_processors.cart',
+                'wishlist.context_processors.wishlist',
+                'orders.context_processors.user_orders',
                 'bookstore.context_processors.store_settings',
             ],
         },
@@ -140,15 +144,15 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 # Email Configuration
 # For development, emails will be printed to the console
 # For production, configure SMTP settings below
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Development
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-# Production SMTP Settings (uncomment and configure for production)
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'  # Or your email provider
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = 'your-email@example.com'
-# EMAIL_HOST_PASSWORD = 'your-email-password'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'excellentmokgope66@gmail.com'
+# IMPORTANT: Use Gmail App Password, not your regular password
+# Generate at: https://myaccount.google.com/apppasswords (requires 2FA enabled)
+EMAIL_HOST_PASSWORD = 'your-email-password'
 
-DEFAULT_FROM_EMAIL = 'Penreach Bookshop <noreply@penreach.co.za>'
+DEFAULT_FROM_EMAIL = 'Penreach Bookshop <excellentmokgope66@gmail.com>'
 ADMIN_EMAIL = 'penreach@penreach.co.za'

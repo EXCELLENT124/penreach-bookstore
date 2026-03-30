@@ -108,87 +108,191 @@
     </style>
 </head>
 <body class="bg-gray-50" style="background-color: white;">
-    <nav class="bg-white shadow-lg" style="background-color: #1e3a8a; border-top: 3px solid skyblue; border-bottom: 3px solid skyblue;">
+    <nav class="bg-white shadow-lg" style="background-color: #1e3a8a; border-top: 3px solid red;">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <a href="{% url 'home' %}" class="flex items-center space-x-2 text-xl font-bold" style="color: orange; font-family: 'Monotype Corsiva', serif;">
-                        <svg class="w-6 h-6" fill="orange" viewBox="0 0 24 24">
-                            <path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/>
-                        </svg>
+            <div class="flex justify-between h-16 items-center">
+                <!-- Hamburger Menu Button (Left Side) -->
+                <div class="flex items-center w-24">
+                    <button id="mobile-menu-btn" class="relative w-10 h-10 flex flex-col items-center justify-center space-y-1.5 focus:outline-none group" aria-label="Toggle menu">
+                        <span class="w-6 h-0.5 bg-orange-500 rounded-full transition-all duration-300 ease-in-out transform origin-center group-hover:bg-orange-400" id="hamburger-line-1"></span>
+                        <span class="w-6 h-0.5 bg-orange-500 rounded-full transition-all duration-300 ease-in-out group-hover:bg-orange-400" id="hamburger-line-2"></span>
+                        <span class="w-6 h-0.5 bg-orange-500 rounded-full transition-all duration-300 ease-in-out transform origin-center group-hover:bg-orange-400" id="hamburger-line-3"></span>
+                    </button>
+                </div>
+
+                <!-- Logo (Center) -->
+                <div class="flex-1 flex justify-center">
+                    <a href="{% url 'home' %}" class="flex items-center text-3xl font-bold" style="color: orange; font-family: 'Monotype Corsiva', serif;">
                         <span>Books in Homes</span>
-                        <svg class="w-5 h-5" fill="orange" viewBox="0 0 24 24">
-                            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-                        </svg>
                     </a>
                 </div>
-                
-                <div class="flex items-center space-x-4">
-                    <div class="px-2 py-1 rounded-md border-2" style="border-color: orange;">
-                        <a href="{% url 'home' %}" class="text-white hover:text-gray-200 px-2 py-1 rounded-md text-sm font-medium" style="color: orange;">
-                                <svg class="w-4 h-4 inline mr-1" fill="orange" viewBox="0 0 24 24">
-                                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-                                </svg>
-                                Home
-                            </a>
-                    </div>
-                    <div class="px-2 py-1 rounded-md border-2" style="border-color: orange;">
-                        <a href="{% url 'book_list' %}" class="text-white hover:text-gray-200 px-2 py-1 rounded-md text-sm font-medium" style="color: orange;">
-                                <svg class="w-4 h-4 inline mr-1" fill="orange" viewBox="0 0 24 24">
-                                    <path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/>
-                                </svg>
-                                Books
-                            </a>
-                    </div>
-                    
+
+                <!-- Cart & Auth Icons (Right Side) -->
+                <div class="flex items-center justify-end space-x-3 w-24">
                     {% if user.is_authenticated %}
-                        <div class="px-2 py-1 rounded-md border-2" style="border-color: orange;">
-                            <a href="{% url 'cart_view' %}" class="text-white hover:text-gray-200 px-2 py-1 rounded-md text-sm font-medium" style="color: orange;">
-                                <svg class="w-4 h-4 inline mr-1" fill="orange" viewBox="0 0 24 24">
-                                    <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
-                                </svg>
-                                Cart ({{ cart_count }})
-                            </a>
-                        </div>
-                        <div class="px-2 py-1 rounded-md border-2" style="border-color: red;">
-                            <a href="{% url 'wishlist_view' %}" class="text-white hover:text-gray-200 px-2 py-1 rounded-md text-sm font-medium" style="color: red;">
-                                <svg class="w-4 h-4 inline mr-1" fill="red" viewBox="0 0 24 24">
-                                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                                </svg>
-                                Wishlist
-                            </a>
-                        </div>
-                        <span class="text-white px-3 py-2 rounded-md text-sm font-medium" style="color: orange;">Welcome, {{ user.full_name|default:user.username }}</span>
-                        <form action="{% url 'logout' %}" method="post" class="inline">
-                            {% csrf_token %}
-                            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium">
-                                Logout
-                            </button>
-                        </form>
+                        <a href="{% url 'cart_view' %}" class="text-orange-500 hover:text-orange-400 p-2 rounded-md transition-colors relative">
+                            <svg class="w-6 h-6" fill="orange" viewBox="0 0 24 24">
+                                <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+                            </svg>
+                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{{ cart_count }}</span>
+                        </a>
+                        <a href="{% url 'wishlist_view' %}" class="text-orange-500 hover:text-orange-400 p-2 rounded-md transition-colors relative">
+                            <svg class="w-6 h-6" fill="orange" viewBox="0 0 24 24">
+                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                            </svg>
+                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{{ wishlist_count }}</span>
+                        </a>
+                        <a href="{% url 'profile' %}" class="flex items-center justify-center w-10 h-10 rounded-full border-2 border-orange-500 hover:bg-orange-500/10 transition-colors" title="My Profile">
+                            <svg class="w-6 h-6" fill="orange" viewBox="0 0 24 24">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                            </svg>
+                        </a>
                     {% else %}
-                        <div class="px-2 py-1 rounded-md border-2" style="border-color: orange;">
-                            <a href="{% url 'login' %}" class="text-white hover:text-gray-200 px-2 py-1 rounded-md text-sm font-medium" style="color: orange;">
-                                <svg class="w-4 h-4 inline mr-1" fill="orange" viewBox="0 0 24 24">
-                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                                </svg>
-                                Login
-                            </a>
-                        </div>
-                                                <div class="px-2 py-1 rounded-md border-2" style="border-color: green;">
-                            <a href="{% url 'signup' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-2 py-1 rounded-md text-sm font-medium" style="background-color: green; border-color: green;">
-                                <svg class="w-4 h-4 inline mr-1" fill="white" viewBox="0 0 24 24">
-                                    <path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                                </svg>
-                                Sign Up
-                            </a>
-                        </div>
+                        <button onclick="openAuthModal()" class="flex items-center justify-center w-10 h-10 rounded-full border-2 border-orange-500 hover:bg-orange-500/10 transition-colors" title="Sign In / Register">
+                            <svg class="w-6 h-6" fill="orange" viewBox="0 0 24 24">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                            </svg>
+                        </button>
                     {% endif %}
                 </div>
             </div>
         </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden absolute top-16 left-0 w-full bg-white shadow-xl z-50" style="background-color: #1e3a8a; border-bottom: 3px solid red;">
+            <div class="px-4 py-4 space-y-2">
+                <a href="{% url 'home' %}" class="flex items-center space-x-3 text-white hover:bg-blue-800 px-4 py-3 rounded-lg transition-colors">
+                    <svg class="w-5 h-5" fill="orange" viewBox="0 0 24 24">
+                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                    </svg>
+                    <span class="font-medium">Home</span>
+                </a>
+                <a href="{% url 'book_list' %}" class="flex items-center space-x-3 text-white hover:bg-blue-800 px-4 py-3 rounded-lg transition-colors">
+                    <svg class="w-5 h-5" fill="orange" viewBox="0 0 24 24">
+                        <path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/>
+                    </svg>
+                    <span class="font-medium">Books</span>
+                </a>
+                
+                <!-- Book Types Submenu -->
+                <div class="border-t-2 border-red-500 pt-2 mt-2">
+                    <p class="text-sky-300 text-xs uppercase tracking-wider px-4 mb-2">Book Types</p>
+                    <a href="{% url 'book_list' %}?type=small" class="flex items-center space-x-3 text-white hover:bg-blue-800 px-4 py-2 rounded-lg transition-colors ml-4">
+                        <span class="w-2 h-2 bg-orange-500 rounded-full"></span>
+                        <span>Small Books</span>
+                    </a>
+                    <a href="{% url 'book_list' %}?type=chart" class="flex items-center space-x-3 text-white hover:bg-blue-800 px-4 py-2 rounded-lg transition-colors ml-4">
+                        <span class="w-2 h-2 bg-sky-400 rounded-full"></span>
+                        <span>Charts</span>
+                    </a>
+                    <a href="{% url 'book_list' %}?type=big" class="flex items-center space-x-3 text-white hover:bg-blue-800 px-4 py-2 rounded-lg transition-colors ml-4">
+                        <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                        <span>Big Books</span>
+                    </a>
+                </div>
+
+                {% if user.is_authenticated %}
+                    <!-- Order Tracking Section -->
+                    {% if user_recent_orders %}
+                    <div class="border-t-2 border-red-500 pt-2 mt-2">
+                        <p class="text-sky-300 text-xs uppercase tracking-wider px-4 mb-2">Order Tracking</p>
+                        {% for order in user_recent_orders %}
+                        <div class="order-track-item px-4 py-2 mb-2 rounded-lg cursor-pointer" style="background-color: rgba(255, 165, 0, 0.1); border-left: 3px solid orange;" onclick="toggleOrderDetails(this)">
+                            <div class="flex justify-between items-center">
+                                <span class="text-orange-400 font-bold text-sm">{{ order.order_number }}</span>
+                                <svg class="w-4 h-4 text-orange-400 order-toggle-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </div>
+                            <div class="text-xs mt-1">
+                                {% if order.delivery_method == 'collection' %}
+                                    {% if order.status == 'pending' %}
+                                        <span class="text-yellow-400">Waiting for collection</span>
+                                    {% elif order.status == 'confirmed' %}
+                                        <span class="text-blue-400">Order confirmed</span>
+                                    {% elif order.status == 'processing' %}
+                                        <span class="text-purple-400">Processing</span>
+                                    {% elif order.status == 'shipped' %}
+                                        <span class="text-orange-400">Ready for collection</span>
+                                    {% elif order.status == 'delivered' %}
+                                        <span class="text-green-400">Collected</span>
+                                    {% else %}
+                                        <span class="text-gray-400">{{ order.get_status_display }}</span>
+                                    {% endif %}
+                                {% else %}
+                                    {% if order.status == 'pending' %}
+                                        <span class="text-yellow-400">Order received</span>
+                                    {% elif order.status == 'confirmed' %}
+                                        <span class="text-blue-400">Order confirmed</span>
+                                    {% elif order.status == 'processing' %}
+                                        <span class="text-purple-400">Processing</span>
+                                    {% elif order.status == 'shipped' %}
+                                        <span class="text-orange-400">Out for delivery</span>
+                                    {% elif order.status == 'delivered' %}
+                                        <span class="text-green-400">Delivered</span>
+                                    {% else %}
+                                        <span class="text-gray-400">{{ order.get_status_display }}</span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                            <div class="order-details hidden mt-2 pt-2 border-t border-orange-500/30">
+                                <div class="flex justify-between items-center text-xs mb-1">
+                                    <span class="text-sky-300">Amount:</span>
+                                    <span class="text-white">R{{ order.total_amount }}</span>
+                                </div>
+                                <div class="flex justify-between items-center text-xs">
+                                    <span class="text-sky-300">Method:</span>
+                                    <span class="text-white">{{ order.get_delivery_method_display }}</span>
+                                </div>
+                                <div class="text-xs text-sky-300 mt-1">{{ order.created_at|date:"M d, Y" }}</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <a href="{% url 'order_history' %}" class="flex items-center space-x-3 text-orange-400 hover:bg-blue-800 px-4 py-2 rounded-lg transition-colors text-sm">
+                            <span>View All Orders</span>
+                        </a>
+                    </div>
+                    {% endif %}
+
+                    <div class="border-t-2 border-red-500 pt-2 mt-2">
+                        <p class="text-sky-300 text-xs uppercase tracking-wider px-4 mb-2">Account</p>
+                        <span class="flex items-center space-x-3 text-orange-400 px-4 py-2">
+                            <svg class="w-5 h-5" fill="orange" viewBox="0 0 24 24">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                            </svg>
+                            <span>{{ user.full_name|default:user.username }}</span>
+                        </span>
+                        <form action="{% url 'logout' %}" method="post" class="mt-1">
+                            {% csrf_token %}
+                            <button type="submit" class="w-full flex items-center space-x-3 text-red-400 hover:bg-blue-800 px-4 py-3 rounded-lg transition-colors text-left">
+                                <svg class="w-5 h-5" fill="red" viewBox="0 0 24 24">
+                                    <path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
+                                </svg>
+                                <span>Logout</span>
+                            </button>
+                        </form>
+                    </div>
+                {% else %}
+                    <div class="border-t border-blue-700 pt-2 mt-2">
+                        <button onclick="openAuthModal(); showLoginForm();" class="w-full flex items-center space-x-3 text-orange-400 hover:bg-blue-800 px-4 py-3 rounded-lg transition-colors text-left">
+                            <svg class="w-5 h-5" fill="orange" viewBox="0 0 24 24">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                            </svg>
+                            <span>Login</span>
+                        </button>
+                        <button onclick="openAuthModal(); showRegisterForm();" class="w-full flex items-center space-x-3 text-green-400 hover:bg-blue-800 px-4 py-3 rounded-lg transition-colors text-left">
+                            <svg class="w-5 h-5" fill="green" viewBox="0 0 24 24">
+                                <path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                            </svg>
+                            <span>Register</span>
+                        </button>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <main class="max-w-7xl mx-auto pb-6 sm:px-6 lg:px-8">
         {% if messages %}
             {% for message in messages %}
                 <div class="mb-4 p-4 rounded-md {% if message.tags == 'success' %}bg-green-100 text-green-700{% elif message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-blue-100 text-blue-700{% endif %}">
@@ -258,50 +362,502 @@
 
     <script src="{% static 'js/main.js' %}"></script>
     <script>
-        // Chatbot functionality
-        const chatbotToggle = document.getElementById('chatbot-toggle');
-        const chatbotWindow = document.getElementById('chatbot-window');
-        const chatbotClose = document.getElementById('chatbot-close');
-        const chatInput = document.getElementById('chat-input');
-        const chatSend = document.getElementById('chat-send');
-        const chatMessages = document.getElementById('chat-messages');
+        // Chatbot functionality - wait for DOM to be ready
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatbotToggle = document.getElementById('chatbot-toggle');
+            const chatbotWindow = document.getElementById('chatbot-window');
+            const chatbotClose = document.getElementById('chatbot-close');
+            const chatInput = document.getElementById('chat-input');
+            const chatSend = document.getElementById('chat-send');
+            const chatMessages = document.getElementById('chat-messages');
 
-        // Toggle chat window
-        chatbotToggle.addEventListener('click', () => {
-            chatbotWindow.style.display = chatbotWindow.style.display === 'flex' ? 'none' : 'flex';
-        });
+            // Toggle chat window
+            chatbotToggle.addEventListener('click', function() {
+                if (chatbotWindow.style.display === 'flex') {
+                    chatbotWindow.style.display = 'none';
+                } else {
+                    chatbotWindow.style.display = 'flex';
+                }
+            });
 
-        // Close chat window
-        chatbotClose.addEventListener('click', () => {
-            chatbotWindow.style.display = 'none';
-        });
+            // Mobile menu toggle with modern animations
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const hamburgerLine1 = document.getElementById('hamburger-line-1');
+            const hamburgerLine2 = document.getElementById('hamburger-line-2');
+            const hamburgerLine3 = document.getElementById('hamburger-line-3');
+            
+            if (mobileMenuBtn && mobileMenu) {
+                // Create backdrop overlay if it doesn't exist
+                let backdrop = document.getElementById('mobile-menu-backdrop');
+                if (!backdrop) {
+                    backdrop = document.createElement('div');
+                    backdrop.id = 'mobile-menu-backdrop';
+                    backdrop.className = 'fixed inset-0 bg-black/50 z-40 opacity-0 transition-opacity duration-300 pointer-events-none';
+                    document.body.appendChild(backdrop);
+                }
+                
+                let isMenuOpen = false;
+                
+                function openMenu() {
+                    isMenuOpen = true;
+                    mobileMenu.classList.remove('hidden');
+                    // Animate menu sliding in from left
+                    mobileMenu.style.transform = 'translateX(0)';
+                    mobileMenu.style.opacity = '1';
+                    // Show backdrop
+                    backdrop.classList.remove('pointer-events-none');
+                    backdrop.classList.remove('opacity-0');
+                    backdrop.classList.add('opacity-100');
+                    // Transform hamburger to X
+                    if (hamburgerLine1 && hamburgerLine2 && hamburgerLine3) {
+                        hamburgerLine1.style.transform = 'translateY(8px) rotate(45deg)';
+                        hamburgerLine2.style.opacity = '0';
+                        hamburgerLine3.style.transform = 'translateY(-8px) rotate(-45deg)';
+                    }
+                    document.body.style.overflow = 'hidden'; // Prevent scrolling
+                }
+                
+                function closeMenu() {
+                    isMenuOpen = false;
+                    // Animate menu sliding out
+                    mobileMenu.style.transform = 'translateX(-100%)';
+                    mobileMenu.style.opacity = '0';
+                    // Hide backdrop
+                    backdrop.classList.remove('opacity-100');
+                    backdrop.classList.add('opacity-0');
+                    backdrop.classList.add('pointer-events-none');
+                    // Transform X back to hamburger
+                    if (hamburgerLine1 && hamburgerLine2 && hamburgerLine3) {
+                        hamburgerLine1.style.transform = 'translateY(0) rotate(0)';
+                        hamburgerLine2.style.opacity = '1';
+                        hamburgerLine3.style.transform = 'translateY(0) rotate(0)';
+                    }
+                    // Wait for animation then hide
+                    setTimeout(() => {
+                        if (!isMenuOpen) {
+                            mobileMenu.classList.add('hidden');
+                        }
+                    }, 300);
+                    document.body.style.overflow = ''; // Restore scrolling
+                }
+                
+                mobileMenuBtn.addEventListener('click', function() {
+                    if (isMenuOpen) {
+                        closeMenu();
+                    } else {
+                        openMenu();
+                    }
+                });
+                
+                // Close menu when clicking backdrop
+                backdrop.addEventListener('click', closeMenu);
+                
+                // Close menu when clicking menu items
+                const menuLinks = mobileMenu.querySelectorAll('a, button');
+                menuLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        setTimeout(closeMenu, 100);
+                    });
+                });
+                
+                // Close menu on escape key
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && isMenuOpen) {
+                        closeMenu();
+                    }
+                });
+                
+                // Initialize menu hidden state with transform
+                mobileMenu.style.transition = 'transform 0.3s ease-in-out, opacity 0.3s ease-in-out';
+                mobileMenu.style.transform = 'translateX(-100%)';
+                mobileMenu.style.opacity = '0';
+            }
+
+            // Close chat window
+            chatbotClose.addEventListener('click', function() {
+                chatbotWindow.style.display = 'none';
+            });
 
         // Chat responses
         const botResponses = {
-            'order': 'To place an order: 1) Browse books, 2) Add to cart, 3) Checkout. Need help with any step?',
-            'delivery': 'We offer free delivery on all orders! Standard delivery takes 3-5 business days. Express delivery available for urgent orders.',
-            'payment': 'We accept credit/debit cards, EFT, and cash on delivery. All payments are secure and encrypted.',
-            'contact': 'You can reach us at: 📞 012 345 6789 or 📧 info@penreachbookshop.com',
-            'return': 'Our return policy: 30-day returns for unused books in original condition. Contact us for return authorization.',
-            'search': 'Use the search bar at the top to find books by title, author, or ISBN. You can also look for Small Books, Charts, or Big Books on our home page!',
-            'help': 'I can help with: ordering, delivery, payment, returns, book search, book categories, and account questions. What do you need?',
-            'small books': '📖 Looking for Small Books? You can find them right on our home page in the Featured Books section! They\'re compact and portable books perfect for quick reading and travel. Just scroll down to see all three categories: Small Books, Charts, and Big Books!',
-            'small book': '📖 Looking for Small Books? You can find them right on our home page in the Featured Books section! They\'re compact and portable books perfect for quick reading and travel. Just scroll down to see all three categories: Small Books, Charts, and Big Books!',
-            'compact books': '📖 Looking for Compact Books? You can find Small Books right on our home page in the Featured Books section! They\'re perfect for quick reading and travel. Just scroll down to see all three categories: Small Books, Charts, and Big Books!',
-            'charts': '📊 Looking for Charts? You can find them right on our home page in the Featured Books section! They\'re educational charts and diagrams perfect for learning and reference. Just scroll down to see all three categories: Small Books, Charts, and Big Books!',
-            'educational charts': '📊 Looking for Educational Charts? You can find them right on our home page in the Featured Books section! They\'re perfect for learning and reference. Just scroll down to see all three categories: Small Books, Charts, and Big Books!',
-            'diagrams': '📊 Looking for Diagrams? You can find Charts right on our home page in the Featured Books section! They\'re educational charts and diagrams perfect for learning and reference. Just scroll down to see all three categories: Small Books, Charts, and Big Books!',
-            'big books': '📚 Looking for Big Books? You can find them right on our home page in the Featured Books section! They\'re large format books ideal for classroom use and group reading. Just scroll down to see all three categories: Small Books, Charts, and Big Books!',
-            'big book': '📚 Looking for Big Books? You can find them right on our home page in the Featured Books section! They\'re large format books ideal for classroom use and group reading. Just scroll down to see all three categories: Small Books, Charts, and Big Books!',
-            'large books': '📚 Looking for Large Books? You can find Big Books right on our home page in the Featured Books section! They\'re ideal for classroom use and group reading. Just scroll down to see all three categories: Small Books, Charts, and Big Books!',
-            'classroom books': '📚 Looking for Classroom Books? You can find Big Books right on our home page in the Featured Books section! They\'re large format books ideal for classroom use and group reading. Just scroll down to see all three categories: Small Books, Charts, and Big Books!',
-            'categories': '📚 You can find all our book categories right on the home page! Just scroll down to the Featured Books section where you\'ll see: 📖 Small Books (compact & portable), 📊 Charts (educational diagrams), and 📚 Big Books (large format for classroom). Each category has its own section to browse!',
-            'category': '📚 You can find all our book categories right on the home page! Just scroll down to the Featured Books section where you\'ll see: 📖 Small Books (compact & portable), 📊 Charts (educational diagrams), and 📚 Big Books (large format for classroom). Each category has its own section to browse!',
-            'featured books': '📚 Our Featured Books are displayed right on the home page! Just scroll down to see three categories: 📖 Small Books, 📊 Charts, and 📚 Big Books. Each category offers unique books for different needs - you can\'t miss them!',
-            'types of books': '📚 You can see all our book types right on the home page! Just scroll down to the Featured Books section to find: 📖 Small Books for quick reading, 📊 Charts for educational purposes, and 📚 Big Books for classroom/group use. Each category is clearly displayed!',
-            'book types': '📚 You can see all our book types right on the home page! Just scroll down to the Featured Books section to find: 📖 Small Books for quick reading, 📊 Charts for educational purposes, and 📚 Big Books for classroom/group use. Each category is clearly displayed!',
-            'home page': '🏠 Our home page has everything you need! You\'ll find the Featured Books section with three categories: 📖 Small Books, 📊 Charts, and 📚 Big Books. Just scroll down to see all our book types organized by category!',
-            'where': '📍 Looking for something specific? Check our home page! Scroll down to the Featured Books section where you\'ll find three categories: 📖 Small Books, 📊 Charts, and 📚 Big Books. Each category is clearly displayed for easy browsing!'
+            // Book Categories and Types
+            'small books': '📖 Small Books are compact and portable books perfect for quick reading and travel. They include short stories, quick reference guides, and portable editions of classics. You can find them on our home page in the Featured Books section!',
+            'small book': '📖 Small Books are compact and portable books perfect for quick reading and travel. They include short stories, quick reference guides, and portable editions of classics. You can find them on our home page in the Featured Books section!',
+            'compact books': '📖 Compact Books (Small Books) are designed for portability. Perfect for reading on-the-go, travel, or quick reference. Available in the Featured Books section on our home page!',
+            'portable books': '📖 Portable Books refer to our Small Books category - compact editions perfect for travel and reading anywhere. Check the Featured Books section on our home page!',
+            'charts': '📊 Charts are educational visual aids including diagrams, maps, educational posters, and reference charts. Great for classrooms, homeschooling, or visual learners. Find them in the Featured Books section!',
+            'educational charts': '📊 Our Educational Charts include diagrams, maps, scientific illustrations, and learning posters. Perfect for classrooms, study rooms, or homeschooling. Available in the Featured Books section!',
+            'diagrams': '📊 Diagrams are part of our Charts collection - visual educational materials covering science, geography, history, and more. Great for visual learning!',
+            'maps': '🗺️ Maps are available in our Charts category! We have world maps, country maps, historical maps, and educational geography charts.',
+            'posters': '📊 Educational posters are part of our Charts collection! Great for classrooms, study spaces, or home learning environments.',
+            'big books': '📚 Big Books are large format books ideal for classroom use, group reading, and young learners. They include illustrated stories, educational content, and reference materials with large, clear text.',
+            'big book': '📚 Big Books are large format books ideal for classroom use, group reading, and young learners. They include illustrated stories, educational content, and reference materials with large, clear text.',
+            'large books': '📚 Large Books (Big Books) feature oversized pages with large text and illustrations. Perfect for reading to groups, classrooms, or for those who prefer larger print.',
+            'classroom books': '📚 Classroom Books refer to our Big Books category - large format editions perfect for teachers, group reading, and educational settings.',
+            'group reading': '📚 For group reading, check out our Big Books category! Large format with clear text and illustrations, perfect for sharing with multiple readers.',
+            'illustrated books': '📚 We have beautifully illustrated books across all categories! Big Books feature the largest illustrations, while Small Books offer portable illustrated editions.',
+            'categories': `📚 We have three main book categories:
+1. 📖 Small Books - Compact & portable
+2. 📊 Charts - Educational diagrams & maps  
+3. 📚 Big Books - Large format for classrooms
+All are featured on our home page!`,
+            'category': `📚 We have three main book categories:
+1. 📖 Small Books - Compact & portable
+2. 📊 Charts - Educational diagrams & maps  
+3. 📚 Big Books - Large format for classrooms
+All are featured on our home page!`,
+            'types of books': `📚 We offer three main book types:
+1. 📖 Small Books - Portable reading
+2. 📊 Charts - Visual learning aids
+3. 📚 Big Books - Large format editions
+Browse them all on our home page!`,
+            'book types': `📚 Our three book types are:
+1. 📖 Small Books (compact)
+2. 📊 Charts (educational visuals)
+3. 📚 Big Books (large format)
+Find them in the Featured Books section on our home page!`,
+            'featured books': '📚 Featured Books are displayed prominently on our home page! They showcase our three main categories: Small Books, Charts, and Big Books. Each category offers unique books for different needs.',
+            
+            // Ordering Process
+            'order': `To place an order:
+1. Browse books by category or search
+2. Click "Add to Cart" on books you want
+3. Go to your Cart and click "Checkout"
+4. Fill in your details and choose Delivery or Collection
+5. Confirm your order
+You'll receive an email confirmation!`,
+            'how to order': `To place an order:
+1. Browse books by category or search
+2. Click "Add to Cart" on books you want
+3. Go to your Cart and click "Checkout"
+4. Fill in your details and choose Delivery or Collection
+5. Confirm your order
+You'll receive an email confirmation!`,
+            'buy books': `To buy books:
+1. Browse our collection or use the search bar
+2. Click "Add to Cart" for each book you want
+3. Review your Cart and click "Proceed to Checkout"
+4. Enter your details and select delivery method
+5. Place your order!`,
+            'purchase': `To make a purchase:
+1. Find books you like (browse or search)
+2. Add them to your cart
+3. Checkout with your details
+4. Choose delivery or collection
+5. Complete your order!`,
+            'checkout': `Our checkout process is simple:
+1. Review your cart items
+2. Enter your full name, email, phone, and address
+3. Choose Delivery or Collection
+4. Place your order
+5. Receive confirmation email`,
+            'cart': '🛒 Your cart holds books you want to buy. Click the Cart link in the navigation to view items, adjust quantities, or proceed to checkout.',
+            'add to cart': 'To add books to your cart, simply click the "Add to Cart" button on any book\'s detail page or listing. The cart icon in the navigation will show your item count.',
+            'remove from cart': 'To remove items from your cart, go to the Cart page and click the remove button (X) next to the item you want to delete.',
+            'wishlist': '❤️ Your Wishlist lets you save books for later! Click the heart icon on any book to add it. Access your wishlist from the navigation bar.',
+            'save for later': 'Use the Wishlist feature to save books for later! Just click the heart icon on any book page. You can view your saved books anytime by clicking "Wishlist" in the navigation.',
+            
+            // Delivery and Collection
+            'delivery': `🚚 We offer two options:
+1. Delivery - Free delivery on all orders! Takes 3-5 business days. We deliver to your specified address.
+2. Collection - Pick up at our store: Boschrand Farm, R40, Nelspruit. Free and convenient!`,
+            'shipping': '🚚 Delivery is FREE on all orders! Standard delivery takes 3-5 business days to your specified address. You\'ll get an email when your order ships.',
+            'collection': `🏪 Collection is FREE! Pick up your order at:
+Penreach Bookshop
+Boschrand Farm, R40, Nelspruit
+We'll email you when your order is ready!`,
+            'pick up': `🏪 You can pick up orders at our store:
+Penreach Bookshop
+Boschrand Farm, R40, Nelspruit
+Choose "Collection" at checkout - it's free!`,
+            'pickup': `🏪 You can pick up orders at our store:
+Penreach Bookshop
+Boschrand Farm, R40, Nelspruit
+Choose "Collection" at checkout - it's free!`,
+            'store pickup': `🏪 Store pickup (Collection) is available at:
+Penreach Bookshop
+Boschrand Farm, R40, Nelspruit
+Free and convenient! We'll notify you when ready.`,
+            'free delivery': '🚚 Yes! Delivery is FREE on all orders! No minimum purchase required. Takes 3-5 business days.',
+            'delivery time': '🚚 Standard delivery takes 3-5 business days. You\'ll receive an email confirmation when your order ships with tracking information.',
+            'how long delivery': '🚚 Standard delivery takes 3-5 business days. Collection orders are typically ready within 1-2 business days.',
+            'express delivery': '🚚 Currently we offer standard delivery (3-5 business days) which is FREE. Contact us if you need urgent delivery - we\'ll do our best to accommodate!',
+            'delivery options': `🚚 You have two delivery options:
+1. Home Delivery - Free, 3-5 business days
+2. Store Collection - Free, pick up at Boschrand Farm, R40, Nelspruit`,
+            'where do you deliver': '🚚 We deliver throughout South Africa! Enter your address at checkout to confirm delivery to your area.',
+            'delivery address': '🚚 You can specify your delivery address during checkout. Make sure to include your street address, city, and postal code for accurate delivery.',
+            'track order': '📦 Once your order ships, you\'ll receive an email with tracking information. You can also view your order status in the Order History section of your account.',
+            'order status': `📦 Check your order status by:
+1. Looking for our confirmation email
+2. Checking Order History in your account (if logged in)
+3. Contacting us with your order number`,
+            
+            // Payment
+            'payment': `💳 We accept:
+• Credit/Debit Cards (Visa, Mastercard)
+• EFT/Bank Transfer
+• Cash on Delivery
+• Cash on Collection
+All online payments are secure and encrypted!`,
+            'pay': `💳 Payment options:
+• Credit/Debit Cards
+• EFT/Bank Transfer  
+• Cash on Delivery
+• Cash on Collection
+Secure checkout guaranteed!`,
+            'credit card': '💳 Yes! We accept all major credit and debit cards including Visa and Mastercard. Payments are processed securely.',
+            'card payment': '💳 We accept Visa, Mastercard, and major debit cards. All transactions are encrypted and secure.',
+            'eft': '💳 EFT (Electronic Funds Transfer) is accepted! After placing your order, you\'ll receive bank details in your confirmation email.',
+            'bank transfer': '💳 Bank transfers/EFT are accepted. Our banking details will be provided in your order confirmation email.',
+            'cash': '💵 Cash payments accepted! You can pay cash on delivery or when collecting your order at our store.',
+            'cash on delivery': '💵 Yes! Cash on Delivery is available. Pay the delivery driver when your books arrive.',
+            'secure payment': '🔒 All payments are secure! We use encryption to protect your card details. We never store your full card information.',
+            'refund': '💰 Refunds are processed within 5-7 business days after we receive your returned items. The refund goes back to your original payment method.',
+            'price': '💰 Book prices are displayed on each book\'s detail page. We offer competitive prices and free delivery on all orders!',
+            'discount': '🎁 Keep an eye out for special promotions! Follow us on social media or check our website for seasonal discounts and special offers.',
+            'promo code': '🎁 Promo codes can be entered at checkout. If you have a valid code, you\'ll see a discount applied to your order total.',
+            'vat': '💰 All prices displayed include VAT (Value Added Tax) where applicable. No hidden fees!',
+            
+            // Account Management
+            'account': '👤 Manage your account by clicking your name in the navigation bar (when logged in). You can view order history, update details, and track orders.',
+            'login': '🔑 Click "Login" in the navigation bar to access your account. Enter your username and password to view orders and manage your profile.',
+            'sign up': '📝 Click "Sign Up" in the navigation bar to create an account. It\'s quick and makes checkout faster!',
+            'register': '📝 Click "Sign Up" in the navigation to create an account. Benefits include faster checkout and order history tracking.',
+            'password': '🔑 Forgot your password? Click "Login" then look for the "Forgot Password" link to reset it. We\'ll send you an email with instructions.',
+            'forgot password': '🔑 No problem! Click "Login" and then "Forgot Password" to reset it. We\'ll email you instructions to create a new password.',
+            'order history': '📋 View your order history by logging into your account. All your past orders with their status will be displayed there.',
+            'past orders': '📋 Your order history shows all previous purchases with their status. Log in to your account to view them.',
+            'profile': '👤 Update your profile details by logging in and accessing your account settings. You can change your name, email, and address.',
+            'update details': '👤 To update your details, log in to your account and access your profile settings. You can modify your contact information there.',
+            'logout': '👋 To log out, click the "Logout" button in the navigation bar. This securely ends your session.',
+            
+            // Returns and Refunds
+            'return': `🔄 Our Return Policy:
+• 30-day returns for unused books
+• Books must be in original condition
+• Contact us for return authorization
+• Refunds processed within 5-7 days
+• Return shipping is at customer's cost unless item is defective`,
+            'returns': `🔄 Return Policy:
+• 30 days to return unused books
+• Must be in original condition with packaging
+• Contact us first for return authorization
+• Refunds to original payment method
+• 5-7 business days processing time`,
+            'exchange': '🔄 Exchanges follow the same process as returns. Contact us within 30 days if you need a different item.',
+            'damaged book': '📦 Received a damaged book? Contact us immediately with your order number and photos. We\'ll arrange a free replacement or full refund.',
+            'wrong item': '📦 Received the wrong item? We apologize! Contact us with your order number and we\'ll arrange the correct item to be sent with free return of the wrong one.',
+            'cancel order': '❌ To cancel an order, contact us immediately with your order number. If the order hasn\'t shipped yet, we can cancel and refund you.',
+            'cancellation': '❌ Orders can be cancelled if they haven\'t been shipped yet. Contact us ASAP with your order number for cancellation.',
+            
+            // Store Information
+            'store': `🏪 Penreach Bookshop
+Location: Boschrand Farm, R40, Nelspruit
+Hours: Monday - Friday, 8:00 AM - 4:00 PM
+Contact: +27(0)13 758 9000`,
+            'location': `📍 We're located at:
+Boschrand Farm, R40, Nelspruit
+Mpumalanga, South Africa`,
+            'address': `📍 Penreach Bookshop
+Boschrand Farm, R40
+Nelspruit
+South Africa`,
+            'directions': '📍 Find us at Boschrand Farm on the R40 near Nelspruit. Look for the Penreach signage!',
+            'hours': `⏰ Store Hours:
+Monday - Friday: 8:00 AM - 4:00 PM
+Saturday - Sunday: Closed
+Public Holidays: Closed`,
+            'opening hours': `⏰ We're open:
+Monday - Friday: 8:00 AM - 4:00 PM
+Weekends: Closed`,
+            'open': `⏰ Store Hours:
+Monday - Friday: 8:00 AM - 4:00 PM
+Saturday & Sunday: Closed`,
+            'closed': '⏰ We\'re closed on weekends (Saturday & Sunday) and public holidays. Open Monday-Friday, 8 AM - 4 PM.',
+            'weekend': '⏰ We\'re closed on weekends. Our hours are Monday-Friday, 8:00 AM - 4:00 PM.',
+            'holiday hours': '⏰ We\'re closed on public holidays. Normal hours: Monday-Friday, 8 AM - 4 PM.',
+            'about': '📚 Penreach Bookshop provides quality educational and recreational books for all ages. We specialize in Small Books, Charts, and Big Books for homes, schools, and libraries.',
+            'who are you': '📚 I\'m the Penreach Bookshop Assistant! I can help you find books, place orders, answer questions about delivery, payments, returns, and more.',
+            'what is penreach': '📚 Penreach is an educational organization. Penreach Bookshop is our bookstore providing quality books for learning and reading enjoyment.',
+            
+            // Contact Information
+            'contact': `📞 Contact us:
+Phone: +27(0)13 758 9000
+Email: penreach@penreach.co.za
+Address: Boschrand Farm, R40, Nelspruit
+Hours: Mon-Fri, 8 AM - 4 PM`,
+            'phone': `📞 Call us: +27(0)13 758 9000
+Available Monday-Friday, 8 AM - 4 PM`,
+            'telephone': `📞 Reach us at: +27(0)13 758 9000
+Monday-Friday, 8 AM - 4 PM`,
+            'email': `📧 Email us: penreach@penreach.co.za
+We typically respond within 24 hours on business days.`,
+            'call': `📞 Call us: +27(0)13 758 9000
+During business hours: Monday-Friday, 8 AM - 4 PM`,
+            'whatsapp': `💬 WhatsApp: +27(0)13 758 9000
+Message us anytime, we'll respond during business hours.`,
+            'social media': `📱 Follow us:
+• Facebook: facebook.com/penreachbookshop
+• Twitter: twitter.com/penreachbookshop`,
+            'facebook': '📘 Find us on Facebook: facebook.com/penreachbookshop',
+            'twitter': '🐦 Follow us on Twitter: twitter.com/penreachbookshop',
+            'support': `📞 Need help? Contact us:
+Phone: +27(0)13 758 9000
+Email: penreach@penreach.co.za`,
+            'customer service': `📞 Our customer service team is ready to help!
+Phone: +27(0)13 758 9000 (Mon-Fri, 8 AM-4 PM)
+Email: penreach@penreach.co.za`,
+            'help': `I can help with:
+📚 Finding books (by title, author, or category)
+🛒 Placing orders
+🚚 Delivery & collection options
+💳 Payment methods
+📦 Order tracking
+🔄 Returns & refunds
+📞 Contact information
+👤 Account questions
+What do you need help with?`,
+            
+            // Search and Navigation
+            'search': `🔍 Use the search bar at the top of any page to find books by:
+• Title
+• Author name
+• Book type (Small Books, Charts, Big Books)
+Just type and hit Enter or click Search!`,
+            'find books': `🔍 Find books by:
+1. Using the search bar (title, author, type)
+2. Browsing categories on the home page
+3. Looking at the Books page for all titles`,
+            'browse': `📚 Browse books by:
+• Using the search bar
+• Clicking "Books" in navigation for all books
+• Visiting the home page for featured categories
+• Looking at Small Books, Charts, or Big Books sections`,
+            'navigation': `🧭 Use the navigation bar at the top:
+• Home - Return to main page
+• Books - View all books
+• Cart - View your shopping cart
+• Wishlist - Your saved books
+• Login/Sign Up - Access your account`,
+            'menu': `🧭 Navigation menu:
+• Home - Featured books and categories
+• Books - Complete book listing
+• Cart - Your selected items
+• Wishlist - Saved for later
+• Login/Sign Up - Account access`,
+            'home page': `🏠 The Home Page shows:
+• Welcome section with search
+• Featured Books categories
+• Small Books, Charts, Big Books sections
+• Quick links to browse`,
+            'book list': '📚 The Books page shows all available books. Use filters or search to find specific titles, authors, or categories.',
+            'filter': `🔍 Use the search bar to filter books by:
+• Keywords in title
+• Author name
+• Book type/category
+Results update instantly!`,
+            'sort': '🔃 On the Books page, you can sort by various criteria to find exactly what you\'re looking for.',
+            
+            // Technical Help
+            'website not working': `🔧 Try these steps:
+1. Refresh the page (F5)
+2. Clear your browser cache
+3. Try a different browser
+4. Check your internet connection
+Still having issues? Contact us!`,
+            'error': '🔧 Having technical issues? Try refreshing the page (F5). If problems persist, please contact us with details of the error.',
+            'problem': `🔧 Technical problem? Try:
+1. Refreshing the page
+2. Clearing browser cache
+3. Using a different browser
+Contact us if issues continue!`,
+            'slow': `⏱️ Website running slow? Try:
+1. Checking your internet connection
+2. Closing other browser tabs
+3. Clearing browser cache
+4. Using a different browser`,
+            'page not loading': `🔧 Page not loading? Check:
+1. Internet connection
+2. Try refreshing (F5)
+3. Clear browser cache
+4. Check if our server is running`,
+            'cant login': `🔑 Login issues? Try:
+1. Check your username/email
+2. Reset password if forgotten
+3. Clear browser cookies
+4. Try a different browser`,
+            'forgot username': '🔑 Forgot your username? Use your email address to log in instead, or contact us for help recovering your account.',
+            
+            // General Questions
+            'recommend': `📚 I'd be happy to recommend books! Tell me:
+• What age group?
+• Educational or recreational?
+• Any specific topic or interest?`,
+            'recommendation': `📚 For recommendations, let me know:
+• Reader's age
+• Type of book (educational/fiction/non-fiction)
+• Topics of interest
+I'll suggest the best category!`,
+            'best seller': '📚 Our popular items include educational charts for classrooms and portable small books for personal reading. Check the Featured Books section!',
+            'popular': `📚 Popular items:
+• Educational Charts for teachers
+• Small Books for portable reading
+• Big Books for classroom use
+Browse the Featured Books section!`,
+            'new books': '📚 New arrivals are featured on our home page! Check the Featured Books section regularly for new additions across all categories.',
+            'gift': `🎁 Books make great gifts! Consider:
+• Small Books for individual readers
+• Charts for educators or students
+• Big Books for classrooms or families
+Add a gift note at checkout!`,
+            'bulk order': '📦 For bulk orders (10+ books), contact us directly at +27(0)13 758 9000 or penreach@penreach.co.za for special pricing!',
+            'school order': '🏫 Schools and educational institutions can contact us for bulk pricing and special orders. Call +27(0)13 758 9000 for assistance.',
+            'library': '📚 We supply books to libraries! Contact us for library pricing and bulk orders at penreach@penreach.co.za.',
+            'educational': `📚 Our educational materials include:
+• Charts (maps, diagrams, educational posters)
+• Big Books (classroom editions)
+• Small Books (student reading)`,
+            'children books': `📚 For children, we recommend:
+• Big Books (large illustrations, great for storytime)
+• Small Books (portable for young readers)
+• Charts (educational visuals)`,
+            'kids books': `📚 For kids, check out:
+• Big Books - Large format with big pictures
+• Small Books - Easy to handle
+• Charts - Colorful learning aids`,
+            'teacher': `🏫 For teachers, we recommend:
+• Big Books for classroom reading
+• Charts for visual aids
+• Educational materials across subjects`,
+            'student': `🎓 For students, we have:
+• Small Books for personal study
+• Charts for reference
+• Educational materials for all levels`,
+            
+            // Miscellaneous
+            'thank you': 'You\'re very welcome! 😊 Happy reading! If you need anything else, I\'m here to help.',
+            'thanks': 'You\'re welcome! 📚 Enjoy your books! Feel free to ask if you need anything else.',
+            'bye': 'Goodbye! 👋 Happy reading! Come back anytime you need book recommendations or help!',
+            'goodbye': 'Goodbye! 👋 Have a wonderful day and enjoy your books!',
+            'hello': '👋 Hello! Welcome to Penreach Bookshop! How can I assist you today?',
+            'hi': 'Hi there! 👋 Welcome to Penreach Bookshop! What can I help you with?',
+            'hey': 'Hey! 👋 Welcome to Penreach Bookshop! How can I help you find your next great read?',
+            'ok': `Great! Let me know if you need anything else. 📚`,
+            'okay': `Perfect! Is there anything else I can help you with?`,
+            'wow': `😊 Glad you're excited! Let me know how I can help you get started!`,
+            'cool': `👍 Awesome! Ready to find some great books?`,
+            'awesome': `🎉 Yes! Let's get you set up with some amazing books!`,
+            'default': `I'm here to help with:
+📚 Finding books (search by title, author, or type)
+🛒 Placing orders
+🚚 Delivery & collection options  
+💳 Payment methods
+📦 Order tracking
+🔄 Returns & refunds
+📞 Contact info: +27(0)13 758 9000
+What would you like to know?`
         };
 
         function addMessage(message, isUser = false) {
@@ -371,7 +927,149 @@
                 sendMessage();
             }
         });
+    });  // Close DOMContentLoaded
+    
+    // Toggle order details visibility in mobile menu
+    function toggleOrderDetails(element) {
+        const details = element.querySelector('.order-details');
+        const icon = element.querySelector('.order-toggle-icon');
+        
+        if (details.classList.contains('hidden')) {
+            details.classList.remove('hidden');
+            icon.style.transform = 'rotate(180deg)';
+            element.style.backgroundColor = 'rgba(255, 165, 0, 0.2)';
+        } else {
+            details.classList.add('hidden');
+            icon.style.transform = 'rotate(0deg)';
+            element.style.backgroundColor = 'rgba(255, 165, 0, 0.1)';
+        }
+    }
+
+    // Authentication Modal Functions
+    function openAuthModal() {
+        const modal = document.getElementById('auth-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeAuthModal() {
+        const modal = document.getElementById('auth-modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.style.overflow = '';
+        // Reset to login form
+        showLoginForm();
+    }
+
+    function showRegisterForm() {
+        document.getElementById('login-form-container').classList.add('hidden');
+        document.getElementById('register-form-container').classList.remove('hidden');
+        document.getElementById('auth-modal-title').textContent = 'Register';
+    }
+
+    function showLoginForm() {
+        document.getElementById('register-form-container').classList.add('hidden');
+        document.getElementById('login-form-container').classList.remove('hidden');
+        document.getElementById('auth-modal-title').textContent = 'Sign In';
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('auth-modal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeAuthModal();
+        }
+    });
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const modal = document.getElementById('auth-modal');
+            if (!modal.classList.contains('hidden')) {
+                closeAuthModal();
+            }
+        }
+    });
     </script>
+
+    <!-- Authentication Modal -->
+    <div id="auth-modal" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center">
+        <div class="bg-white rounded-lg shadow-2xl max-w-md w-full mx-4 overflow-hidden" style="background-color: #1e3a8a; border: 2px solid orange;">
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center px-6 py-4 border-b border-orange-500/30">
+                <h2 id="auth-modal-title" class="text-xl font-bold" style="color: orange; font-family: 'Monotype Corsiva', serif;">Sign In</h2>
+                <button onclick="closeAuthModal()" class="text-orange-400 hover:text-orange-300 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Login Form -->
+            <div id="login-form-container" class="p-6">
+                <form id="modal-login-form" method="post" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-1" style="color: skyblue;">Username or Email</label>
+                            <input type="text" name="username" required class="w-full px-3 py-2 rounded-md border focus:outline-none focus:ring-2 focus:ring-orange-500" style="background-color: #1e3a8a; border-color: orange; color: white;" placeholder="Enter username">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1" style="color: skyblue;">Password</label>
+                            <input type="password" name="password" required class="w-full px-3 py-2 rounded-md border focus:outline-none focus:ring-2 focus:ring-orange-500" style="background-color: #1e3a8a; border-color: orange; color: white;" placeholder="Enter password">
+                        </div>
+                        <button type="submit" class="w-full py-2 px-4 rounded-md font-bold transition-colors hover:opacity-90" style="background-color: orange; color: #1e3a8a;">
+                            Sign In
+                        </button>
+                    </div>
+                </form>
+                <div class="mt-4 text-center">
+                    <p class="text-sm" style="color: skyblue;">
+                        Don't have an account? 
+                        <button onclick="showRegisterForm()" class="text-orange-400 hover:text-orange-300 font-semibold underline transition-colors">Register</button>
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Register Form (Hidden by default) -->
+            <div id="register-form-container" class="p-6 hidden">
+                <form id="modal-register-form" method="post" action="{% url 'signup' %}">
+                    {% csrf_token %}
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-1" style="color: skyblue;">Full Name</label>
+                            <input type="text" name="full_name" required class="w-full px-3 py-2 rounded-md border focus:outline-none focus:ring-2 focus:ring-orange-500" style="background-color: #1e3a8a; border-color: orange; color: white;" placeholder="Enter full name">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1" style="color: skyblue;">Username</label>
+                            <input type="text" name="username" required class="w-full px-3 py-2 rounded-md border focus:outline-none focus:ring-2 focus:ring-orange-500" style="background-color: #1e3a8a; border-color: orange; color: white;" placeholder="Choose username">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1" style="color: skyblue;">Email</label>
+                            <input type="email" name="email" required class="w-full px-3 py-2 rounded-md border focus:outline-none focus:ring-2 focus:ring-orange-500" style="background-color: #1e3a8a; border-color: orange; color: white;" placeholder="Enter email">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1" style="color: skyblue;">Password</label>
+                            <input type="password" name="password1" required class="w-full px-3 py-2 rounded-md border focus:outline-none focus:ring-2 focus:ring-orange-500" style="background-color: #1e3a8a; border-color: orange; color: white;" placeholder="Create password">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1" style="color: skyblue;">Confirm Password</label>
+                            <input type="password" name="password2" required class="w-full px-3 py-2 rounded-md border focus:outline-none focus:ring-2 focus:ring-orange-500" style="background-color: #1e3a8a; border-color: orange; color: white;" placeholder="Confirm password">
+                        </div>
+                        <button type="submit" class="w-full py-2 px-4 rounded-md font-bold transition-colors hover:opacity-90" style="background-color: orange; color: #1e3a8a;">
+                            Register
+                        </button>
+                    </div>
+                </form>
+                <div class="mt-4 text-center">
+                    <p class="text-sm" style="color: skyblue;">
+                        Already have an account? 
+                        <button onclick="showLoginForm()" class="text-orange-400 hover:text-orange-300 font-semibold underline transition-colors">Sign In</button>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="text-white mt-12" style="background-color: #1e3a8a;">

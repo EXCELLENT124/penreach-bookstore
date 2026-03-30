@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Analytics Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .stat-card {
+            background: linear-gradient(135deg, #1e3a8a 0%, #312e81 100%);
+            border: 2px solid orange;
+        }
+        .chart-container {
+            background: #1e3a8a;
+            border: 2px solid orange;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-orange-500 mb-2" style="font-family: 'Monotype Corsiva', serif;">
+                Website Analytics Dashboard
+            </h1>
+            <p class="text-sky-300">Real-time visitor statistics and website data</p>
+        </div>
+
+        <!-- Today's Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="stat-card rounded-lg p-6">
+                <h3 class="text-sky-300 text-sm uppercase mb-2">Today's Visits</h3>
+                <p class="text-3xl font-bold text-orange-500">{{ today_stats.total_visits|default:"0" }}</p>
+                <p class="text-xs text-sky-400 mt-1">Total page views today</p>
+            </div>
+            
+            <div class="stat-card rounded-lg p-6">
+                <h3 class="text-sky-300 text-sm uppercase mb-2">Unique Visitors Today</h3>
+                <p class="text-3xl font-bold text-orange-500">{{ today_stats.unique_visitors|default:"0" }}</p>
+                <p class="text-xs text-sky-400 mt-1">First-time visitors today</p>
+            </div>
+            
+            <div class="stat-card rounded-lg p-6">
+                <h3 class="text-sky-300 text-sm uppercase mb-2">Registered User Visits</h3>
+                <p class="text-3xl font-bold text-orange-500">{{ today_stats.registered_users_visits|default:"0" }}</p>
+                <p class="text-xs text-sky-400 mt-1">Logged-in users today</p>
+            </div>
+            
+            <div class="stat-card rounded-lg p-6">
+                <h3 class="text-sky-300 text-sm uppercase mb-2">Total Unique Visitors</h3>
+                <p class="text-3xl font-bold text-orange-500">{{ total_unique_visitors|default:"0" }}</p>
+                <p class="text-xs text-sky-400 mt-1">All time unique IPs</p>
+            </div>
+        </div>
+
+        <!-- Weekly Chart -->
+        <div class="chart-container rounded-lg p-6 mb-8">
+            <h2 class="text-xl font-bold text-orange-500 mb-4">Last 7 Days Traffic</h2>
+            <div class="space-y-3">
+                {% for stat in weekly_stats %}
+                <div class="flex items-center">
+                    <span class="w-24 text-sm text-sky-300">{{ stat.date|date:"M d" }}</span>
+                    <div class="flex-1 h-8 bg-blue-900/50 rounded overflow-hidden">
+                        <div class="h-full bg-orange-500 rounded bar-fill" data-visits="{{ stat.total_visits }}"></div>
+                    </div>
+                    <span class="w-16 text-right text-sm text-orange-400 ml-2">{{ stat.total_visits }}</span>
+                </div>
+                {% empty %}
+                <p class="text-sky-400 text-center py-4">No data available for the last 7 days</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Top Pages -->
+            <div class="chart-container rounded-lg p-6">
+                <h2 class="text-xl font-bold text-orange-500 mb-4">Top 10 Pages</h2>
+                <div class="space-y-2">
+                    {% for page in top_pages %}
+                    <div class="flex justify-between items-center py-2 border-b border-orange-500/20">
+                        <span class="text-sky-300 text-sm">{{ page.page_name }}</span>
+                        <span class="text-orange-400 font-bold">{{ page.view_count }}</span>
+                    </div>
+                    {% empty %}
+                    <p class="text-sky-400 text-center py-4">No page view data yet</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Recent Visitors -->
+            <div class="chart-container rounded-lg p-6">
+                <h2 class="text-xl font-bold text-orange-500 mb-4">Recent Visitors (Last 24h)</h2>
+                <div class="overflow-y-auto max-h-80">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="text-sky-300 border-b border-orange-500/30">
+                                <th class="text-left py-2">IP Address</th>
+                                <th class="text-left py-2">Time</th>
+                                <th class="text-left py-2">Page</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for visitor in recent_visitors %}
+                            <tr class="border-b border-orange-500/10">
+                                <td class="py-2 text-sky-400">{{ visitor.ip_address|default:"Unknown" }}</td>
+                                <td class="py-2 text-sky-400">{{ visitor.timestamp|date:"H:i" }}</td>
+                                <td class="py-2 text-orange-400 truncate max-w-xs">{{ visitor.page_visited }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-sky-400 text-center py-4">No recent visitors</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="mt-8 flex gap-4">
+            <a href="/admin/analytics/visitor/" class="bg-orange-500 hover:bg-orange-600 text-blue-900 font-bold py-2 px-4 rounded transition-colors">
+                View All Visitors in Admin
+            </a>
+            <a href="/admin/analytics/dailystats/" class="bg-sky-500 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded transition-colors">
+                View Daily Stats in Admin
+            </a>
+        </div>
+    </div>
+</body>
+</html>

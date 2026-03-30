@@ -1,0 +1,74 @@
+{% extends 'books/base.html' %}
+{% load static %}
+
+{% block title %}Edit Profile - Penreach Bookshop{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden" style="border-top: 4px solid orange;">
+        <!-- Edit Profile Header -->
+        <div class="px-6 py-4" style="background-color: #1e3a8a;">
+            <div class="flex items-center space-x-4">
+                <div class="w-16 h-16 rounded-full bg-orange-500 flex items-center justify-center">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-orange-500">Edit Profile</h1>
+                    <p class="text-sky-300">Update your account information</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Profile Form -->
+        <form method="POST" class="p-6 space-y-6">
+            {% csrf_token %}
+            
+            <div>
+                <label for="full_name" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                <input type="text" id="full_name" name="full_name" value="{{ full_name|default:'' }}"
+                    class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-orange-500 focus:outline-none transition-colors"
+                    placeholder="Enter your full name">
+            </div>
+
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                <input type="email" id="email" name="email" value="{{ email|default:'' }}"
+                    class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-orange-500 focus:outline-none transition-colors"
+                    placeholder="Enter your email address">
+            </div>
+
+            <div>
+                <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                <input type="tel" id="phone" name="phone" value="{{ phone|default:'' }}"
+                    class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-orange-500 focus:outline-none transition-colors"
+                    placeholder="Enter your phone number">
+            </div>
+
+            <div>
+                <label for="address" class="block text-sm font-medium text-gray-700 mb-2">Address</label>
+                <textarea id="address" name="address" rows="3"
+                    class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-orange-500 focus:outline-none transition-colors resize-none"
+                    placeholder="Enter your address">{{ address|default:'' }}</textarea>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex space-x-4 pt-4">
+                <button type="submit" class="flex-1 py-3 px-4 rounded-lg font-semibold transition-colors" style="background-color: orange; color: white;">
+                    <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    Save Changes
+                </button>
+                <a href="{% url 'profile' %}" class="flex-1 text-center py-3 px-4 rounded-lg font-semibold transition-colors" style="background-color: #6b7280; color: white;">
+                    <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

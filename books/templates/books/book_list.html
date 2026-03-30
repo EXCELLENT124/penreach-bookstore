@@ -9,10 +9,10 @@
     <div class="mb-6">
         <form method="get" class="flex gap-4">
             <input type="text" name="q" value="{{ query }}" 
-                   placeholder="Search books by title, author, or description..." 
-                   class="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                   placeholder="Search by title, author, or book type (e.g., 'small books', 'charts', 'big books')..." 
+                   class="flex-1 px-4 py-3 rounded-lg border-2 border-orange-400 focus:border-orange-500 focus:outline-none text-gray-700">
             <button type="submit" 
-                    class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-md font-medium">
+                    class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg transition-colors">
                 Search
             </button>
         </form>
@@ -24,9 +24,9 @@
 </div>
 
 {% if books %}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="books-grid">
         {% for book in books %}
-        <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300" style="border: 2px solid #1e3a8a;">
+        <div class="book-card bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300" style="border: 3px solid #6b21a8; background-color: #6b21a8;">
             {% if book.cover_image %}
                 <img src="{{ book.cover_image.url }}" alt="{{ book.title }}" class="w-full h-48 object-cover">
             {% else %}
@@ -35,29 +35,29 @@
                 </div>
             {% endif %}
             <div class="p-4">
-                <h3 class="text-lg font-semibold text-gray-900 mb-1 truncate" style="color: #1e3a8a;">{{ book.title }}</h3>
-                <div class="border-2 rounded-md p-2 mb-2" style="border-color: skyblue; background-color: skyblue;">
-                    <p class="text-gray-600 text-sm" style="color: #1e3a8a;">{{ book.description|truncatewords:30 }}</p>
+                <h3 class="text-lg font-semibold mb-1 truncate book-title" style="color: orange; font-weight: bold;">{{ book.title }}</h3>
+                <div class="border-2 rounded-md p-2 mb-2 book-desc-box" style="border-color: orange; background-color: rgba(255, 165, 0, 0.1);">
+                    <p class="text-sm book-desc-text" style="color: white;">{{ book.description|truncatewords:30 }}</p>
                 </div>
-                <p class="text-gray-500 text-xs mb-3">{{ book.pages }} pages | {{ book.language }}</p>
+                <p class="text-xs mb-3" style="color: #a855f7;">{{ book.pages }} pages | {{ book.language }}</p>
                 <div class="flex justify-between items-center mb-3">
-                    <span class="text-xl font-bold text-indigo-600">R{{ book.price }}</span>
+                    <span class="text-xl font-bold book-price" style="color: orange;">R{{ book.price }}</span>
                     <span class="text-sm {% if book.stock > 0 %}text-green-600{% else %}text-red-600{% endif %}">
                         {% if book.stock > 0 %}In Stock ({{ book.stock }}){% else %}Out of Stock{% endif %}
                     </span>
                 </div>
                 <div class="flex gap-2 items-center">
                     <a href="{% url 'book_detail' book.pk %}" 
-                       class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 px-3 py-2 rounded-md text-sm font-medium text-center">
+                       class="flex-1 px-3 py-2 rounded-md text-sm font-medium text-center book-view-btn" style="background-color: #4b5563; color: white;">
                         View Details
                     </a>
                     {% if book.stock > 0 %}
                         <a href="{% url 'add_to_cart' book.pk %}" 
-                           class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-md text-sm font-medium text-center">
+                           class="flex-1 px-3 py-2 rounded-md text-sm font-medium text-center book-cart-btn" style="background-color: orange; color: #1e3a8a; font-weight: bold;">
                             Add to Cart
                         </a>
                     {% endif %}
-                    <a href="{% url 'add_to_wishlist' book.pk %}" class="text-red-600 hover:text-red-700 text-2xl transition-colors duration-300 flex flex-col items-center">
+                    <a href="{% url 'add_to_wishlist' book.pk %}" class="book-wishlist-btn text-2xl transition-colors duration-300 flex flex-col items-center" style="color: orange;">
                         <span>❤️</span>
                         <span class="text-xs mt-1">wish</span>
                     </a>
@@ -77,4 +77,79 @@
         </p>
     </div>
 {% endif %}
+
+<script>
+    // Apply Books on Shelf styling to book cards
+    document.addEventListener('DOMContentLoaded', function() {
+        const bookCards = document.querySelectorAll('.book-card');
+        
+        bookCards.forEach((card, index) => {
+            // Apply transitions
+            card.style.transition = 'all 0.3s ease-in-out';
+            
+            // Style the wishlist button
+            const wishlistBtn = card.querySelector('.book-wishlist-btn');
+            if (wishlistBtn) {
+                wishlistBtn.style.transition = 'all 0.3s ease-in-out';
+                wishlistBtn.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.2)';
+                    this.querySelector('span:first-child').style.filter = 'drop-shadow(0 0 8px orange)';
+                });
+                wishlistBtn.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                    this.querySelector('span:first-child').style.filter = 'none';
+                });
+            }
+            
+            // Style the View Details button
+            const viewBtn = card.querySelector('.book-view-btn');
+            if (viewBtn) {
+                viewBtn.style.transition = 'all 0.3s ease-in-out';
+                viewBtn.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = '#6b7280';
+                    this.style.transform = 'scale(1.05)';
+                });
+                viewBtn.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = '#4b5563';
+                    this.style.transform = 'scale(1)';
+                });
+            }
+            
+            // Style the Add to Cart button
+            const cartBtn = card.querySelector('.book-cart-btn');
+            if (cartBtn) {
+                cartBtn.style.transition = 'all 0.3s ease-in-out';
+                cartBtn.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = '#ff8c00';
+                    this.style.transform = 'scale(1.05)';
+                });
+                cartBtn.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = 'orange';
+                    this.style.transform = 'scale(1)';
+                });
+            }
+            
+            // Add hover effect to card
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px) scale(1.02)';
+                this.style.boxShadow = '0 20px 40px rgba(255, 165, 0, 0.3)';
+                this.style.borderColor = 'orange';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+                this.style.boxShadow = 'none';
+                this.style.borderColor = '#6b21a8';
+            });
+            
+            // Animate on scroll
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 100 + index * 50);
+        });
+    });
+</script>
 {% endblock %}

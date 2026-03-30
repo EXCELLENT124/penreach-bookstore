@@ -5,10 +5,14 @@ from django.db import transaction
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.conf import settings
+import logging
 from .models import Order, OrderItem
 from .forms import OrderForm
 from cart.models import CartItem
 from cart.views import _cart_id
+
+# Set up logging for order emails
+logger = logging.getLogger(__name__)
 
 @login_required
 def checkout(request):
@@ -56,16 +60,20 @@ def checkout(request):
                     email_body = render_to_string('orders/order_confirmation_email.txt', {
                         'order': order,
                     })
-                    send_mail(
+                    email_sent = send_mail(
                         subject=email_subject,
                         message=email_body,
                         from_email=settings.DEFAULT_FROM_EMAIL,
                         recipient_list=[order.email],
-                        fail_silently=True,
+                        fail_silently=False,
                     )
+                    if email_sent:
+                        logger.info(f"Order confirmation email sent successfully to {order.email} for order {order.order_number}")
+                    else:
+                        logger.warning(f"Order confirmation email failed to send to {order.email} for order {order.order_number}")
                 except Exception as e:
                     # Log the error but don't prevent order completion
-                    print(f"Failed to send order confirmation email: {e}")
+                    logger.error(f"Failed to send order confirmation email to {order.email} for order {order.order_number}: {e}")
                 
                 messages.success(request, f'Order placed successfully! Your order number is {order.order_number}')
                 return redirect('order_confirmation', order_id=order.id)

@@ -77,6 +77,26 @@
         </div>
         <h1 class="text-4xl font-bold text-white mb-4" style="color: #1e3a8a;">Welcome to Penreach Bookshop</h1>
         <p class="text-3xl text-white mb-8" style="color: red; font-family: 'Freestyle Script', cursive;">Discover your next favorite book from our curated collection</p>
+        
+        <!-- Search Form -->
+        <div class="max-w-2xl mx-auto mb-8">
+            <form action="{% url 'book_list' %}" method="GET" class="flex gap-2">
+                <input 
+                    type="text" 
+                    name="q" 
+                    placeholder="Search by title, author, or book type (e.g., 'small books', 'charts', 'big books')..." 
+                    value="{{ request.GET.q }}"
+                    class="flex-1 px-4 py-3 rounded-lg border-2 border-orange-400 focus:border-orange-500 focus:outline-none text-gray-700"
+                >
+                <button 
+                    type="submit" 
+                    class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+                >
+                    Search
+                </button>
+            </form>
+        </div>
+        
         <a href="{% url 'book_list' %}" class="bg-indigo-900 hover:bg-indigo-800 text-white font-bold py-3 px-6 rounded-lg text-lg" style="background-color: #1e3a8a; color: orange;">
             Browse All Books
         </a>
@@ -85,8 +105,8 @@
 
 <!-- Book Categories Section -->
 <section class="mb-12">
-    <div class="text-center mb-8" style="background-color: #1e3a8a; padding: 1.5rem; border-radius: 0.5rem; border: 3px solid skyblue;">
-        <h2 class="paint-droplets">
+    <div class="text-center mb-8" style="background-color: #1e3a8a; padding: 1.5rem; border-radius: 0.5rem; border: 3px solid orange;">
+        <h2 class="paint-droplets text-3xl font-bold" style="color: orange; font-family: 'Monotype Corsiva', serif;">
             Featured Books
             <span class="droplet-1"></span>
             <span class="droplet-2"></span>
@@ -135,7 +155,7 @@
 
 {% if featured_books %}
 <section class="mb-12">
-    <div class="text-center mb-8" style="background-color: #1e3a8a; padding: 1.5rem; border-radius: 0.5rem; border: 3px solid skyblue;">
+    <div class="text-center mb-8" style="background-color: #7c3aed; padding: 1.5rem; border-radius: 0.5rem; border: 3px solid orange;">
         <h2 class="text-3xl font-bold text-white" style="color: orange; font-family: 'Monotype Corsiva', 'Times New Roman', cursive; font-size: 2.5rem; letter-spacing: 2px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Books on Shelf</h2>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -150,10 +170,10 @@
             {% endif %}
             <div class="p-6">
                 <div class="flex justify-between items-start mb-2">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-1 truncate flex-1" style="color: #1e3a8a;">{{ book.title }}</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-1 truncate flex-1" style="color: #9333ea;">{{ book.title }}</h3>
                     <div class="ml-2">
                         {% if book.book_type == 'small_books' %}
-                            <span class="inline-block bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded">Small Books</span>
+                            <span class="inline-block bg-purple-100 text-purple-800 text-xs font-medium px-2 py-1 rounded">Small Books</span>
                         {% elif book.book_type == 'charts' %}
                             <span class="inline-block bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">Charts</span>
                         {% elif book.book_type == 'big_books' %}
@@ -163,13 +183,13 @@
                         {% endif %}
                     </div>
                 </div>
-                <div class="border-2 rounded-md p-3 mb-4" style="border-color: skyblue; background-color: skyblue;">
-                    <p class="text-gray-500 text-sm" style="color: #1e3a8a;">{{ book.description|truncatewords:20 }}</p>
+                <div class="border-2 rounded-md p-3 mb-4" style="border-color: #a855f7; background-color: rgba(168, 85, 247, 0.2);">
+                    <p class="text-gray-500 text-sm" style="color: #e9d5ff;">{{ book.description|truncatewords:20 }}</p>
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="text-2xl font-bold text-indigo-600">R{{ book.price }}</span>
                     <div class="flex space-x-2">
-                        <a href="{% url 'add_to_wishlist' book.pk %}" class="text-red-600 hover:text-red-700 text-2xl transition-colors duration-300 flex flex-col items-center">
+                        <a href="{% url 'add_to_wishlist' book.pk %}" class="text-orange-500 hover:text-orange-600 text-2xl transition-colors duration-300 flex flex-col items-center book-wishlist-btn">
                             <span>❤️</span>
                             <span class="text-xs mt-1">wish</span>
                         </a>
@@ -205,4 +225,168 @@
         </div>
     </div>
 </section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Style Featured Books Category Containers
+    const categoryContainers = document.querySelectorAll('.grid.grid-cols-1.md\\:grid-cols-3.gap-8 > .text-center > div');
+    
+    categoryContainers.forEach((container, index) => {
+        // Apply theme styling
+        container.style.backgroundColor = '#6b21a8';
+        container.style.border = '3px solid red';
+        container.style.borderRadius = '0.75rem';
+        container.style.transition = 'all 0.3s ease-in-out';
+        container.style.position = 'relative';
+        container.style.overflow = 'hidden';
+        
+        // Style the emoji icon
+        const emoji = container.querySelector('.text-6xl');
+        if (emoji) {
+            emoji.style.fontSize = '4rem';
+            emoji.style.marginBottom = '1rem';
+            emoji.style.transition = 'transform 0.3s ease-in-out';
+        }
+        
+        // Style the heading
+        const heading = container.querySelector('h3');
+        if (heading) {
+            heading.style.color = 'orange';
+            heading.style.fontFamily = "'Monotype Corsiva', serif";
+            heading.style.fontSize = '1.75rem';
+            heading.style.textShadow = '1px 1px 2px rgba(0,0,0,0.3)';
+        }
+        
+        // Style the description
+        const desc = container.querySelector('p');
+        if (desc) {
+            desc.style.color = 'white';
+            desc.style.opacity = '0.9';
+        }
+        
+        // Style the button
+        const button = container.querySelector('a');
+        if (button) {
+            button.style.backgroundColor = 'orange';
+            button.style.color = '#1e3a8a';
+            button.style.fontWeight = 'bold';
+            button.style.border = '2px solid orange';
+            button.style.transition = 'all 0.3s ease-in-out';
+        }
+        
+        // Add hover effects
+        container.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-8px)';
+            this.style.boxShadow = '0 20px 40px rgba(0,0,0,0.3)';
+            if (emoji) emoji.style.transform = 'scale(1.2) rotate(5deg)';
+        });
+        
+        container.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = 'none';
+            if (emoji) emoji.style.transform = 'scale(1) rotate(0)';
+        });
+        
+        // Add staggered animation on load
+        container.style.opacity = '0';
+        container.style.transform = 'translateY(30px)';
+        setTimeout(() => {
+            container.style.opacity = '1';
+            container.style.transform = 'translateY(0)';
+        }, index * 150);
+    });
+    
+    // Style Books on Shelf containers
+    const bookCards = document.querySelectorAll('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.gap-8 > div');
+    
+    bookCards.forEach((card, index) => {
+        // Apply theme styling to card
+        card.style.border = '3px solid #6b21a8';
+        card.style.borderRadius = '0.75rem';
+        card.style.overflow = 'hidden';
+        card.style.transition = 'all 0.3s ease-in-out';
+        card.style.backgroundColor = '#6b21a8';
+        
+        // Style the title
+        const title = card.querySelector('h3');
+        if (title) {
+            title.style.color = 'orange';
+            title.style.fontWeight = 'bold';
+        }
+        
+        // Style the description box
+        const descBox = card.querySelector('.border-2.rounded-md');
+        if (descBox) {
+            descBox.style.borderColor = 'orange';
+            descBox.style.backgroundColor = 'rgba(255, 165, 0, 0.1)';
+            descBox.style.borderWidth = '2px';
+        }
+        
+        // Style the description text
+        const descText = card.querySelector('.border-2.rounded-md p');
+        if (descText) {
+            descText.style.color = 'white';
+        }
+        
+        // Style the price
+        const price = card.querySelector('.text-2xl.font-bold');
+        if (price) {
+            price.style.color = 'orange';
+            price.style.fontWeight = 'bold';
+        }
+        
+        // Style the wishlist button
+        const wishlistBtn = card.querySelector('.book-wishlist-btn');
+        if (wishlistBtn) {
+            wishlistBtn.style.transition = 'all 0.3s ease-in-out';
+            wishlistBtn.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.2)';
+                this.querySelector('span:first-child').style.filter = 'drop-shadow(0 0 8px orange)';
+            });
+            wishlistBtn.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+                this.querySelector('span:first-child').style.filter = 'none';
+            });
+        }
+        
+        // Style the View Details button
+        const viewBtn = card.querySelector('a:not(.book-wishlist-btn)');
+        if (viewBtn && viewBtn.textContent.includes('View Details')) {
+            viewBtn.style.backgroundColor = 'orange';
+            viewBtn.style.color = '#1e3a8a';
+            viewBtn.style.fontWeight = 'bold';
+            viewBtn.style.transition = 'all 0.3s ease-in-out';
+            viewBtn.addEventListener('mouseenter', function() {
+                this.style.backgroundColor = '#ff8c00';
+                this.style.transform = 'scale(1.05)';
+            });
+            viewBtn.addEventListener('mouseleave', function() {
+                this.style.backgroundColor = 'orange';
+                this.style.transform = 'scale(1)';
+            });
+        }
+        
+        // Add hover effect to card
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-8px) scale(1.02)';
+            this.style.boxShadow = '0 20px 40px rgba(255, 165, 0, 0.3)';
+            this.style.borderColor = 'red';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+            this.style.boxShadow = 'none';
+            this.style.borderColor = '#6b21a8';
+        });
+        
+        // Animate on scroll
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, 300 + index * 100);
+    });
+});
+</script>
 {% endblock %}

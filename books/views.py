@@ -1,6 +1,42 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
 from .models import Book
+
+@login_required
+def profile(request):
+    """Display user profile details."""
+    user = request.user
+    context = {
+        'user': user,
+        'full_name': user.full_name if hasattr(user, 'full_name') else user.username,
+        'email': user.email,
+        'phone': getattr(user, 'phone', ''),
+        'address': getattr(user, 'address', ''),
+    }
+    return render(request, 'books/profile.html', context)
+
+@login_required
+def edit_profile(request):
+    """Allow user to edit profile details."""
+    user = request.user
+    if request.method == 'POST':
+        # Update user profile information
+        user.full_name = request.POST.get('full_name', user.full_name if hasattr(user, 'full_name') else '')
+        user.email = request.POST.get('email', user.email)
+        user.phone = request.POST.get('phone', getattr(user, 'phone', ''))
+        user.address = request.POST.get('address', getattr(user, 'address', ''))
+        user.save()
+        return redirect('profile')
+    
+    context = {
+        'user': user,
+        'full_name': user.full_name if hasattr(user, 'full_name') else user.username,
+        'email': user.email,
+        'phone': getattr(user, 'phone', ''),
+        'address': getattr(user, 'address', ''),
+    }
+    return render(request, 'books/edit_profile.html', context)
 
 def home(request):
     featured_books = Book.objects.filter(is_active=True)[:6]
