@@ -19,6 +19,9 @@ class OrderItemInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
+    # Custom template for enhanced order management with AJAX
+    change_list_template = 'admin/orders/order/change_list.html'
+    
     list_display = ('order_number', 'full_name', 'email', 'phone', 'total_amount', 'status', 'created_at')
     list_filter = ('status', 'created_at')
     search_fields = ('order_number', 'full_name', 'email', 'phone')

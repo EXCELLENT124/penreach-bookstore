@@ -1,14 +1,6 @@
 {% extends "admin/base.html" %}
 {% load static %}
 
-{% block title %}Books in homes administration | Penreach{% endblock %}
-
-{% block branding %}
-<a href="{% url 'admin:index' %}" style="color: white; text-decoration: none; font-size: 24px; font-weight: bold;">
-    📚 Books in homes administration
-</a>
-{% endblock %}
-
 {% block extrastyle %}{{ block.super }}
 <style>
     /* Custom Admin Theme - Purple & Orange */
@@ -156,6 +148,7 @@
 <script>
 // Admin Enhancement JavaScript
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize all admin enhancements
     initBookPreview();
     initOrderStatusUpdate();
     initBulkUpload();
@@ -164,6 +157,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // 1. Book Preview Modal
 function initBookPreview() {
+    // Add preview buttons to book list
     const bookRows = document.querySelectorAll('#result_list tbody tr');
     bookRows.forEach(row => {
         const previewBtn = document.createElement('button');
@@ -180,6 +174,7 @@ function initBookPreview() {
 }
 
 function showBookPreview(bookId) {
+    // Create modal if not exists
     let modal = document.getElementById('book-preview-modal');
     if (!modal) {
         modal = document.createElement('div');
@@ -193,8 +188,11 @@ function showBookPreview(bookId) {
         `;
         document.body.appendChild(modal);
     }
+    
+    // Show modal
     modal.classList.add('active');
     
+    // Fetch book data
     fetch(`/admin/books/book/${bookId}/preview/`)
         .then(r => r.json())
         .then(data => {
@@ -238,7 +236,7 @@ function initOrderStatusUpdate() {
     });
 }
 
-// 3. Enhanced Bulk Upload
+// 3. Enhanced Bulk Upload with Progress
 function initBulkUpload() {
     const dropZone = document.getElementById('bulk-upload-zone');
     if (!dropZone) return;
@@ -260,6 +258,7 @@ function initBulkUpload() {
 }
 
 function handleFileUpload(file) {
+    // Validate file
     if (!file.name.endsWith('.csv') && !file.name.endsWith('.xlsx')) {
         showNotification('Please upload CSV or Excel file', 'error');
         return;
@@ -268,6 +267,7 @@ function handleFileUpload(file) {
     const formData = new FormData();
     formData.append('file', file);
     
+    // Show progress
     const progressDiv = document.getElementById('upload-progress');
     progressDiv.style.display = 'block';
     
@@ -285,7 +285,7 @@ function handleFileUpload(file) {
     });
 }
 
-// 4. Charts
+// 4. Charts Initialization
 function initCharts() {
     const ctx = document.getElementById('sales-chart');
     if (!ctx) return;
@@ -302,10 +302,18 @@ function initCharts() {
                 tension: 0.4
             }]
         },
-        options: { responsive: true }
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            }
+        }
     });
 }
 
+// Helper Functions
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -321,7 +329,7 @@ function getCookie(name) {
     return cookieValue;
 }
 
-function showNotification(message, type) {
+function showNotification(message, type = 'info') {
     const notif = document.createElement('div');
     notif.className = `notification ${type}`;
     notif.textContent = message;
@@ -334,10 +342,22 @@ function showNotification(message, type) {
         color: white;
         font-weight: bold;
         z-index: 9999;
-        background: ${type === 'success' ? '#10b981' : '#ef4444'};
+        animation: slideIn 0.3s ease;
+        background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#7c3aed'};
     `;
     document.body.appendChild(notif);
     setTimeout(() => notif.remove(), 3000);
 }
 </script>
+{% endblock %}
+
+{% block nav-global %}
+<!-- Quick Stats in Header -->
+<div class="admin-stats-grid" style="padding: 10px 20px; background: rgba(255,255,255,0.1);">
+    <div style="display: flex; gap: 30px; color: white;">
+        <span>📚 <strong>{{ book_count|default:0 }}</strong> Books</span>
+        <span>📦 <strong>{{ order_count|default:0 }}</strong> Orders</span>
+        <span>👥 <strong>{{ customer_count|default:0 }}</strong> Customers</span>
+    </div>
+</div>
 {% endblock %}

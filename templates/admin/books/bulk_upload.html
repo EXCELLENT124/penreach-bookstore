@@ -1,0 +1,251 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}Bulk Upload Books | Penreach Admin{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <h1 style="color: #7c3aed; margin-bottom: 24px;">📚 Bulk Book Upload</h1>
+    
+    <div class="module" style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <h2 style="color: #1f2937; margin-bottom: 16px;">Upload Books via CSV or Excel</h2>
+        
+        <!-- File Drop Zone -->
+        <div id="drop-zone" class="drop-zone">
+            <div style="font-size: 48px; margin-bottom: 16px;">📁</div>
+            <p style="font-size: 18px; color: #4b5563; margin-bottom: 8px;">
+                <strong>Drag & drop your file here</strong>
+            </p>
+            <p style="color: #6b7280;">or click to browse</p>
+            <input type="file" id="file-input" accept=".csv,.xlsx" style="display: none;">
+        </div>
+        
+        <!-- Upload Progress -->
+        <div id="upload-progress" style="display: none; margin-top: 24px; padding: 20px; background: #f9fafb; border-radius: 8px;">
+            <p style="margin-bottom: 12px; color: #4b5563;">Uploading and processing books...</p>
+            <div class="progress-bar">
+                <div id="progress-fill" class="progress-fill" style="width: 0%;"></div>
+            </div>
+            <p id="progress-text" style="text-align: center; margin-top: 8px; color: #7c3aed; font-weight: 600;">0%</p>
+            
+            <!-- Processing Log -->
+            <div id="processing-log" style="margin-top: 16px; padding: 12px; background: white; border-radius: 6px; max-height: 200px; overflow-y: auto; font-family: monospace; font-size: 12px; border: 1px solid #e5e7eb;">
+                <div style="color: #6b7280;">Waiting for file...</div>
+            </div>
+        </div>
+        
+        <!-- Results -->
+        <div id="upload-results" style="display: none; margin-top: 24px; padding: 20px; border-radius: 8px;">
+            <h3 style="margin-bottom: 12px;">Upload Results</h3>
+            <div id="results-content"></div>
+        </div>
+        
+        <!-- Template Download -->
+        <div style="margin-top: 24px; padding: 16px; background: #fef3c7; border-radius: 8px; border-left: 4px solid #f59e0b;">
+            <p style="margin-bottom: 8px;"><strong>📋 Download Template</strong></p>
+            <p style="color: #92400e; margin-bottom: 12px;">Use our template to ensure your file is formatted correctly.</p>
+            <a href="{% static 'admin/book_upload_template.csv' %}" class="button" style="background: #f59e0b; color: #1e3a8a; text-decoration: none; padding: 8px 16px; border-radius: 4px; display: inline-block;">
+                Download CSV Template
+            </a>
+        </div>
+        
+        <!-- Instructions -->
+        <div style="margin-top: 24px;">
+            <h3 style="color: #1f2937; margin-bottom: 12px;">Required Columns:</h3>
+            <ul style="color: #4b5563; line-height: 1.8;">
+                <li><code style="background: #f3f4f6; padding: 2px 6px; border-radius: 3px;">title</code> - Book title (required)</li>
+                <li><code style="background: #f3f4f6; padding: 2px 6px; border-radius: 3px;">author</code> - Author name (required)</li>
+                <li><code style="background: #f3f4f6; padding: 2px 6px; border-radius: 3px;">price</code> - Price in Rands (required)</li>
+                <li><code style="background: #f3f4f6; padding: 2px 6px; border-radius: 3px;">stock</code> - Quantity in stock (required)</li>
+                <li><code style="background: #f3f4f6; padding: 2px 6px; border-radius: 3px;">book_type</code> - Type: small_books, charts, or big_books (required)</li>
+                <li><code style="background: #f3f4f6; padding: 2px 6px; border-radius: 3px;">description</code> - Book description (optional)</li>
+                <li><code style="background: #f3f4f6; padding: 2px 6px; border-radius: 3px;">isbn</code> - ISBN number (optional)</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const progressDiv = document.getElementById('upload-progress');
+    const progressFill = document.getElementById('progress-fill');
+    const progressText = document.getElementById('progress-text');
+    const processingLog = document.getElementById('processing-log');
+    const resultsDiv = document.getElementById('upload-results');
+    const resultsContent = document.getElementById('results-content');
+    
+    // Click to browse
+    dropZone.addEventListener('click', () => fileInput.click());
+    
+    // File selection
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            handleFile(e.target.files[0]);
+        }
+    });
+    
+    // Drag and drop
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('dragover');
+    });
+    
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('dragover');
+    });
+    
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        
+        if (e.dataTransfer.files.length > 0) {
+            handleFile(e.dataTransfer.files[0]);
+        }
+    });
+    
+    function handleFile(file) {
+        // Validate file type
+        const validTypes = ['.csv', '.xlsx', '.xls'];
+        const fileExt = '.' + file.name.split('.').pop().toLowerCase();
+        
+        if (!validTypes.includes(fileExt)) {
+            showNotification('Please upload a CSV or Excel file (.csv, .xlsx, .xls)', 'error');
+            return;
+        }
+        
+        // Show progress
+        dropZone.style.display = 'none';
+        progressDiv.style.display = 'block';
+        processingLog.innerHTML = '<div style="color: #7c3aed;">📤 Uploading file...</div>';
+        
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('csrfmiddlewaretoken', getCookie('csrftoken'));
+        
+        // Simulate progress
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+            progress += Math.random() * 15;
+            if (progress > 90) progress = 90;
+            updateProgress(progress, 'Uploading...');
+        }, 300);
+        
+        fetch('/admin/books/bulk-upload/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            clearInterval(progressInterval);
+            updateProgress(100, 'Complete!');
+            
+            processingLog.innerHTML += `<div style="color: #10b981; margin-top: 8px;">✓ Processing complete!</div>`;
+            
+            setTimeout(() => {
+                showResults(data);
+            }, 500);
+        })
+        .catch(error => {
+            clearInterval(progressInterval);
+            processingLog.innerHTML += `<div style="color: #ef4444;">❌ Error: ${error.message}</div>`;
+            showNotification('Upload failed. Please try again.', 'error');
+        });
+    }
+    
+    function updateProgress(percent, text) {
+        progressFill.style.width = percent + '%';
+        progressText.textContent = Math.round(percent) + '% - ' + text;
+    }
+    
+    function showResults(data) {
+        progressDiv.style.display = 'none';
+        resultsDiv.style.display = 'block';
+        resultsDiv.style.background = data.errors.length === 0 ? '#d1fae5' : '#fef3c7';
+        
+        let html = `
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px;">
+                <div style="text-align: center; padding: 16px; background: white; border-radius: 8px;">
+                    <div style="font-size: 32px; font-weight: bold; color: #7c3aed;">${data.success_count || 0}</div>
+                    <div style="color: #6b7280;">Books Added</div>
+                </div>
+                <div style="text-align: center; padding: 16px; background: white; border-radius: 8px;">
+                    <div style="font-size: 32px; font-weight: bold; color: #f59e0b;">${data.updated_count || 0}</div>
+                    <div style="color: #6b7280;">Books Updated</div>
+                </div>
+                <div style="text-align: center; padding: 16px; background: white; border-radius: 8px;">
+                    <div style="font-size: 32px; font-weight: bold; color: #ef4444;">${data.errors?.length || 0}</div>
+                    <div style="color: #6b7280;">Errors</div>
+                </div>
+            </div>
+        `;
+        
+        if (data.errors && data.errors.length > 0) {
+            html += `
+                <div style="margin-top: 16px;">
+                    <h4 style="color: #92400e; margin-bottom: 8px;">⚠️ Errors Found:</h4>
+                    <ul style="color: #92400e; line-height: 1.6;">
+                        ${data.errors.map(err => `<li>${err}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+        
+        html += `
+            <div style="margin-top: 20px; text-align: center;">
+                <button onclick="location.reload()" class="button" style="background: #7c3aed; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">
+                    Upload Another File
+                </button>
+                <a href="/admin/books/book/" class="button" style="background: #f59e0b; color: #1e3a8a; padding: 10px 20px; text-decoration: none; border-radius: 4px; margin-left: 12px; display: inline-block;">
+                    View All Books
+                </a>
+            </div>
+        `;
+        
+        resultsContent.innerHTML = html;
+        
+        if (data.success_count > 0) {
+            showNotification(`Successfully processed ${data.success_count} books!`, 'success');
+        }
+    }
+    
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    function showNotification(message, type) {
+        const notif = document.createElement('div');
+        notif.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            z-index: 9999;
+            background: ${type === 'success' ? '#10b981' : '#ef4444'};
+            animation: slideIn 0.3s ease;
+        `;
+        notif.textContent = message;
+        document.body.appendChild(notif);
+        setTimeout(() => notif.remove(), 3000);
+    }
+});
+</script>
+{% endblock %}

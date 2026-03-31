@@ -125,6 +125,9 @@ def bulk_upload_view(request):
     return render(request, 'admin/books/bulk_upload.html', context)
 
 class BookAdmin(admin.ModelAdmin):
+    # Custom template for enhanced book list with preview
+    change_list_template = 'admin/books/book/change_list.html'
+    
     list_display = ('title', 'author', 'book_type', 'price', 'stock', 'is_active', 'created_at')
     list_filter = ('is_active', 'language', 'publisher', 'book_type')
     search_fields = ('title', 'author', 'isbn')

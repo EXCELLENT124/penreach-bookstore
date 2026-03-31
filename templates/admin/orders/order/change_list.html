@@ -1,0 +1,235 @@
+{% extends "admin/change_list.html" %}
+{% load static %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+    .status-select {
+        padding: 6px 12px;
+        border-radius: 20px;
+        border: 2px solid #e5e7eb;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .status-select.pending { background: #fef3c7; color: #92400e; border-color: #f59e0b; }
+    .status-select.processing { background: #dbeafe; color: #1e40af; border-color: #3b82f6; }
+    .status-select.shipped { background: #d1fae5; color: #065f46; border-color: #10b981; }
+    .status-select.delivered { background: #d1fae5; color: #065f46; border-color: #10b981; }
+    .status-select.cancelled { background: #fee2e2; color: #991b1b; border-color: #ef4444; }
+    
+    .status-update-indicator {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-left: 8px;
+        animation: pulse 1.5s infinite;
+    }
+    .status-update-indicator.updating { background: #f59e0b; }
+    .status-update-indicator.success { background: #10b981; }
+    .status-update-indicator.error { background: #ef4444; }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+    
+    .order-total { 
+        font-weight: bold; 
+        color: #7c3aed; 
+        font-size: 16px; 
+    }
+    
+    .quick-actions-bar {
+        background: #f9fafb;
+        padding: 16px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    
+    .quick-action-btn {
+        background: #7c3aed;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .quick-action-btn:hover {
+        background: #6b21a8;
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %}
+
+{% block object-tools %}
+{{ block.super }}
+
+<!-- Quick Actions Bar -->
+<div class="quick-actions-bar">
+    <strong>Quick Actions:</strong>
+    <button class="quick-action-btn" onclick="bulkUpdateStatus('processing')">Mark Selected as Processing</button>
+    <button class="quick-action-btn" onclick="bulkUpdateStatus('shipped')">Mark Selected as Shipped</button>
+    <button class="quick-action-btn" onclick="bulkUpdateStatus('delivered')">Mark Selected as Delivered</button>
+    <button class="quick-action-btn" onclick="printShippingLabels()" style="background:#f59e0b;color:#1e3a8a;">🖨️ Print Shipping Labels</button>
+</div>
+{% endblock %}
+
+{% block result_list %}
+{{ block.super }}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Replace status text with dropdowns
+    const statusCells = document.querySelectorAll('#result_list td.field-status');
+    statusCells.forEach(cell => {
+        const currentStatus = cell.textContent.trim().toLowerCase();
+        const orderRow = cell.closest('tr');
+        const orderId = orderRow.querySelector('th a')?.getAttribute('href')?.split('/')?.slice(-2, -1)[0];
+        
+        if (orderId) {
+            const select = document.createElement('select');
+            select.className = `status-select ${currentStatus}`;
+            select.dataset.orderId = orderId;
+            select.innerHTML = `
+                <option value="pending" ${currentStatus === 'pending' ? 'selected' : ''}>Pending</option>
+                <option value="processing" ${currentStatus === 'processing' ? 'selected' : ''}>Processing</option>
+                <option value="shipped" ${currentStatus === 'shipped' ? 'selected' : ''}>Shipped</option>
+                <option value="delivered" ${currentStatus === 'delivered' ? 'selected' : ''}>Delivered</option>
+                <option value="cancelled" ${currentStatus === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+            `;
+            
+            select.addEventListener('change', function() {
+                updateOrderStatus(orderId, this.value, this);
+            });
+            
+            cell.innerHTML = '';
+            cell.appendChild(select);
+        }
+    });
+});
+
+function updateOrderStatus(orderId, newStatus, selectElement) {
+    // Show loading indicator
+    const indicator = document.createElement('span');
+    indicator.className = 'status-update-indicator updating';
+    selectElement.parentNode.appendChild(indicator);
+    selectElement.disabled = true;
+    
+    fetch(`/admin/orders/order/${orderId}/update-status/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ status: newStatus })
+    })
+    .then(response => response.json())
+    .then(data => {
+        indicator.remove();
+        selectElement.disabled = false;
+        
+        if (data.success) {
+            // Update select styling
+            selectElement.className = `status-select ${newStatus}`;
+            
+            // Show success indicator briefly
+            const successIndicator = document.createElement('span');
+            successIndicator.className = 'status-update-indicator success';
+            successIndicator.style.marginLeft = '8px';
+            successIndicator.innerHTML = '✓';
+            selectElement.parentNode.appendChild(successIndicator);
+            
+            setTimeout(() => successIndicator.remove(), 2000);
+            
+            showNotification(`Order #${orderId} status updated to ${newStatus}`, 'success');
+        } else {
+            showNotification('Failed to update status', 'error');
+        }
+    })
+    .catch(error => {
+        indicator.remove();
+        selectElement.disabled = false;
+        showNotification('Error updating status', 'error');
+    });
+}
+
+function bulkUpdateStatus(newStatus) {
+    const selectedOrders = document.querySelectorAll('input[name="_selected_action"]:checked');
+    if (selectedOrders.length === 0) {
+        showNotification('Please select orders first', 'error');
+        return;
+    }
+    
+    let updated = 0;
+    selectedOrders.forEach(checkbox => {
+        const orderRow = checkbox.closest('tr');
+        const statusSelect = orderRow.querySelector('.status-select');
+        if (statusSelect) {
+            const orderId = statusSelect.dataset.orderId;
+            statusSelect.value = newStatus;
+            updateOrderStatus(orderId, newStatus, statusSelect);
+            updated++;
+        }
+    });
+    
+    showNotification(`Updating ${updated} orders to ${newStatus}...`, 'success');
+}
+
+function printShippingLabels() {
+    const selectedOrders = document.querySelectorAll('input[name="_selected_action"]:checked');
+    if (selectedOrders.length === 0) {
+        showNotification('Please select orders to print labels', 'error');
+        return;
+    }
+    
+    const orderIds = Array.from(selectedOrders).map(cb => {
+        const row = cb.closest('tr');
+        return row.querySelector('.status-select')?.dataset.orderId;
+    }).filter(id => id);
+    
+    // Open print labels in new window
+    window.open(`/admin/orders/print-labels/?ids=${orderIds.join(',')}`, '_blank');
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function showNotification(message, type) {
+    const notif = document.createElement('div');
+    notif.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 24px;
+        border-radius: 8px;
+        color: white;
+        font-weight: bold;
+        z-index: 9999;
+        background: ${type === 'success' ? '#10b981' : '#ef4444'};
+        animation: slideIn 0.3s ease;
+    `;
+    notif.textContent = message;
+    document.body.appendChild(notif);
+    setTimeout(() => notif.remove(), 3000);
+}
+</script>
+{% endblock %}

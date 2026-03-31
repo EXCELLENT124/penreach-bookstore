@@ -1,0 +1,167 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}Admin Dashboard | Penreach Bookshop{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <h1 style="color: #7c3aed; margin-bottom: 24px;">📊 Admin Dashboard</h1>
+    
+    <!-- Stats Cards -->
+    <div class="admin-stats-grid">
+        <div class="stat-card books">
+            <div class="stat-icon" style="background: #ede9fe; color: #7c3aed;">📚</div>
+            <div class="stat-label">Total Books</div>
+            <div class="stat-value">{{ total_books|default:"0" }}</div>
+            <div style="color: #10b981; font-size: 12px;">{{ active_books|default:"0" }} active</div>
+        </div>
+        
+        <div class="stat-card orders">
+            <div class="stat-icon" style="background: #d1fae5; color: #065f46;">📦</div>
+            <div class="stat-label">Orders Today</div>
+            <div class="stat-value">{{ orders_today|default:"0" }}</div>
+            <div style="color: #6b7280; font-size: 12px;">{{ pending_orders|default:"0" }} pending</div>
+        </div>
+        
+        <div class="stat-card customers">
+            <div class="stat-icon" style="background: #fef3c7; color: #92400e;">👥</div>
+            <div class="stat-label">Customers</div>
+            <div class="stat-value">{{ total_customers|default:"0" }}</div>
+            <div style="color: #10b981; font-size: 12px;">{{ new_customers|default:"0" }} new this week</div>
+        </div>
+        
+        <div class="stat-card revenue">
+            <div class="stat-icon" style="background: #fce7f3; color: #be185d;">💰</div>
+            <div class="stat-label">Revenue (Month)</div>
+            <div class="stat-value">R{{ monthly_revenue|default:"0" }}</div>
+            <div style="color: #10b981; font-size: 12px;">+{{ revenue_growth|default:"0" }}% vs last month</div>
+        </div>
+    </div>
+    
+    <!-- Charts Section -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 24px 0;">
+        <div class="chart-container">
+            <h3 class="chart-title">📈 Sales Trend</h3>
+            <canvas id="sales-chart" height="200"></canvas>
+        </div>
+        
+        <div class="chart-container">
+            <h3 class="chart-title">📊 Books by Category</h3>
+            <canvas id="category-chart" height="200"></canvas>
+        </div>
+    </div>
+    
+    <div class="chart-container">
+        <h3 class="chart-title">📦 Recent Orders</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #f9fafb; border-bottom: 2px solid #e5e7eb;">
+                    <th style="padding: 12px; text-align: left;">Order #</th>
+                    <th style="padding: 12px; text-align: left;">Customer</th>
+                    <th style="padding: 12px; text-align: left;">Status</th>
+                    <th style="padding: 12px; text-align: right;">Total</th>
+                    <th style="padding: 12px; text-align: left;">Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in recent_orders|slice:":5" %}
+                <tr style="border-bottom: 1px solid #e5e7eb;">
+                    <td style="padding: 12px;">#{{ order.id }}</td>
+                    <td style="padding: 12px;">{{ order.customer_name|default:order.email }}</td>
+                    <td style="padding: 12px;">
+                        <span class="status-badge status-{{ order.status }}">{{ order.status|title }}</span>
+                    </td>
+                    <td style="padding: 12px; text-align: right; font-weight: bold; color: #7c3aed;">R{{ order.total }}</td>
+                    <td style="padding: 12px; color: #6b7280;">{{ order.created_at|date:"M d, Y" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="padding: 24px; text-align: center; color: #6b7280;">No recent orders</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div style="text-align: center; margin-top: 16px;">
+            <a href="/admin/orders/order/" class="button" style="background: #7c3aed; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">View All Orders</a>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div style="background: #f9fafb; border-radius: 12px; padding: 24px; margin: 24px 0;">
+        <h3 style="margin-bottom: 16px; color: #1f2937;">⚡ Quick Actions</h3>
+        <div class="quick-actions">
+            <a href="/admin/books/book/add/" class="quick-action-btn">
+                ➕ Add New Book
+            </a>
+            <a href="/admin/books/bulk-upload/" class="quick-action-btn">
+                📤 Bulk Upload
+            </a>
+            <a href="/admin/orders/order/" class="quick-action-btn">
+                📦 Manage Orders
+            </a>
+            <a href="/analytics/dashboard/" target="_blank" class="quick-action-btn" style="background: #f59e0b; color: #1e3a8a;">
+                📊 Analytics
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Sales Trend Chart
+    const salesCtx = document.getElementById('sales-chart').getContext('2d');
+    new Chart(salesCtx, {
+        type: 'line',
+        data: {
+            labels: {{ sales_labels|safe|default:"['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']" }},
+            datasets: [{
+                label: 'Sales (R)',
+                data: {{ sales_data|safe|default:"[1200, 1900, 1500, 2200, 1800, 2500, 2100]" }},
+                borderColor: '#7c3aed',
+                backgroundColor: 'rgba(124, 58, 237, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return 'R' + value;
+                        }
+                    }
+                }
+            }
+        }
+    });
+    
+    // Category Chart
+    const categoryCtx = document.getElementById('category-chart').getContext('2d');
+    new Chart(categoryCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ category_labels|safe|default:"['Small Books', 'Charts', 'Big Books']" }},
+            datasets: [{
+                data: {{ category_data|safe|default:"[45, 30, 25]" }},
+                backgroundColor: ['#7c3aed', '#f59e0b', '#10b981'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

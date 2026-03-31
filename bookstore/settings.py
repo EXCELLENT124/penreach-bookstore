@@ -145,14 +145,9 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 # For development, emails will be printed to the console
 # For production, configure SMTP settings below
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'smtp.gmail.com'  # Or your preferred SMTP server
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'excellentmokgope66@gmail.com'
-# IMPORTANT: Use Gmail App Password, not your regular password
-# Generate at: https://myaccount.google.com/apppasswords (requires 2FA enabled)
-EMAIL_HOST_PASSWORD = 'your-email-password'
-
-DEFAULT_FROM_EMAIL = 'Penreach Bookshop <excellentmokgope66@gmail.com>'
-ADMIN_EMAIL = 'penreach@penreach.co.za'
+EMAIL_HOST_USER = 'umpmerch@gmail.com'  # Replace with actual email
+EMAIL_HOST_PASSWORD = 'pwwb oexa gkah fbfd'  # Replace with actual password
+DEFAULT_FROM_EMAIL = 'noreply@penreach.org.za'

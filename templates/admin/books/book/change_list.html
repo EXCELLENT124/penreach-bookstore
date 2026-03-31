@@ -1,0 +1,130 @@
+{% extends "admin/change_list.html" %}
+{% load static %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+    .preview-btn {
+        background: #7c3aed;
+        color: white;
+        border: none;
+        padding: 4px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-left: 8px;
+        transition: all 0.3s ease;
+    }
+    .preview-btn:hover {
+        background: #6b21a8;
+        transform: scale(1.05);
+    }
+    .stock-low { color: #ef4444; font-weight: bold; }
+    .stock-medium { color: #f59e0b; }
+    .stock-high { color: #10b981; }
+</style>
+{% endblock %}
+
+{% block result_list %}
+{{ block.super }}
+
+<!-- Book Preview Modal -->
+<div id="book-preview-modal" class="preview-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;">
+    <div class="preview-content" style="background:white;border-radius:16px;max-width:600px;width:90%;padding:24px;position:relative;animation:slideIn 0.3s ease;">
+        <span class="preview-close" onclick="closeBookPreview()" style="position:absolute;top:16px;right:16px;font-size:24px;cursor:pointer;color:#6b7280;">&times;</span>
+        <div id="preview-body">
+            <div style="text-align:center;padding:40px;">
+                <div class="loading" style="font-size:48px;">📚</div>
+                <p>Loading book details...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add preview buttons to each book row
+    const rows = document.querySelectorAll('#result_list tbody tr');
+    rows.forEach(row => {
+        const actionsCell = row.querySelector('td:last-child');
+        if (actionsCell) {
+            const bookId = row.querySelector('th a')?.getAttribute('href')?.split('/')?.slice(-2, -1)[0];
+            if (bookId) {
+                const previewBtn = document.createElement('button');
+                previewBtn.className = 'preview-btn';
+                previewBtn.innerHTML = '👁️';
+                previewBtn.title = 'Quick Preview';
+                previewBtn.onclick = function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showBookPreview(bookId);
+                };
+                actionsCell.appendChild(previewBtn);
+            }
+        }
+    });
+});
+
+function showBookPreview(bookId) {
+    const modal = document.getElementById('book-preview-modal');
+    modal.style.display = 'flex';
+    document.getElementById('preview-body').innerHTML = `
+        <div style="text-align:center;padding:40px;">
+            <div style="font-size:48px;animation:pulse 1.5s infinite;">📚</div>
+            <p>Loading book details...</p>
+        </div>
+    `;
+    
+    // Fetch book data via AJAX
+    fetch(`/admin/books/book/${bookId}/preview/`)
+        .then(response => response.json())
+        .then(data => {
+            const stockClass = data.stock < 5 ? 'stock-low' : data.stock < 20 ? 'stock-medium' : 'stock-high';
+            document.getElementById('preview-body').innerHTML = `
+                <div style="text-align:center;">
+                    <h2 style="color:#7c3aed;margin-bottom:16px;">${data.title}</h2>
+                    ${data.cover_image ? `<img src="${data.cover_image}" style="max-width:200px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.15);margin-bottom:16px;" />` : '<div style="width:200px;height:280px;background:#f3f4f6;border-radius:8px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;"><span style="font-size:64px;">📖</span></div>'}
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;text-align:left;background:#f9fafb;padding:16px;border-radius:8px;margin-top:16px;">
+                        <div><strong style="color:#6b7280;">Author:</strong> ${data.author}</div>
+                        <div><strong style="color:#6b7280;">Price:</strong> <span style="color:#7c3aed;font-size:20px;font-weight:bold;">R${data.price}</span></div>
+                        <div><strong style="color:#6b7280;">Stock:</strong> <span class="${stockClass}">${data.stock} units</span></div>
+                        <div><strong style="color:#6b7280;">Category:</strong> ${data.category}</div>
+                        <div><strong style="color:#6b7280;">Type:</strong> ${data.book_type}</div>
+                        <div><strong style="color:#6b7280;">ISBN:</strong> ${data.isbn}</div>
+                    </div>
+                    <p style="text-align:left;margin-top:16px;color:#4b5563;line-height:1.6;">${data.description}</p>
+                    <div style="margin-top:24px;display:flex;gap:12px;justify-content:center;">
+                        <a href="/admin/books/book/${bookId}/change/" class="button" style="background:#7c3aed;color:white;padding:8px 16px;border-radius:4px;text-decoration:none;">Edit Book</a>
+                        <a href="/books/${bookId}/" target="_blank" class="button" style="background:#f59e0b;color:#1e3a8a;padding:8px 16px;border-radius:4px;text-decoration:none;">View on Site</a>
+                    </div>
+                </div>
+            `;
+        })
+        .catch(error => {
+            document.getElementById('preview-body').innerHTML = `
+                <div style="text-align:center;color:#ef4444;padding:40px;">
+                    <p style="font-size:48px;">❌</p>
+                    <p>Error loading book preview. Please try again.</p>
+                </div>
+            `;
+        });
+}
+
+function closeBookPreview() {
+    document.getElementById('book-preview-modal').style.display = 'none';
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('book-preview-modal');
+    if (e.target === modal) {
+        closeBookPreview();
+    }
+});
+
+// Keyboard shortcut to close modal
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeBookPreview();
+    }
+});
+</script>
+{% endblock %}
