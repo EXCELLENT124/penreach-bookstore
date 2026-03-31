@@ -34,7 +34,25 @@ def cart_view(request):
         messages.error(request, 'Please log in to view your cart')
         return redirect('login')
     
-    cart_items = CartItem.objects.filter(user=request.user, is_active=True)
+    # Get all active cart items for the user
+    cart_items = CartItem.objects.filter(user=request.user, is_active=True).select_related('book')
+    
+    # Merge duplicate items (same book) into single entry
+    merged_items = {}
+    for item in cart_items:
+        if item.book_id in merged_items:
+            # Merge quantities and update the existing item
+            existing = merged_items[item.book_id]
+            existing.quantity += item.quantity
+            existing.save()
+            # Delete the duplicate
+            item.delete()
+        else:
+            merged_items[item.book_id] = item
+    
+    # Convert back to list
+    cart_items = list(merged_items.values())
+    
     total = sum(item.sub_total() for item in cart_items)
     total_items = sum(item.quantity for item in cart_items)
     

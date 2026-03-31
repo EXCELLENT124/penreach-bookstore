@@ -39,9 +39,9 @@
     
     <!-- Books Grid -->
     {% if books %}
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="category-books-grid">
             {% for book in books %}
-                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                <div class="category-book-card bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300" style="border: 3px solid #6b21a8; background-color: #6b21a8;">
                     {% if book.cover_image %}
                         <img src="{{ book.cover_image.url }}" alt="{{ book.title }}" class="w-full h-64 object-cover">
                     {% else %}
@@ -52,10 +52,10 @@
                     
                     <div class="p-6">
                         <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-lg font-semibold text-gray-900 flex-1">{{ book.title }}</h3>
+                            <h3 class="text-lg font-semibold flex-1 category-book-title" style="color: orange; font-weight: bold;">{{ book.title }}</h3>
                             <div class="ml-2">
                                 {% if book.book_type == 'small_books' %}
-                                    <span class="inline-block bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded">Small Books</span>
+                                    <span class="inline-block bg-purple-100 text-purple-800 text-xs font-medium px-2 py-1 rounded">Small Books</span>
                                 {% elif book.book_type == 'charts' %}
                                     <span class="inline-block bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">Charts</span>
                                 {% elif book.book_type == 'big_books' %}
@@ -65,10 +65,12 @@
                                 {% endif %}
                             </div>
                         </div>
-                        <p class="text-gray-600 text-sm mb-4">{{ book.description|truncatewords:30 }}</p>
+                        <div class="border-2 rounded-md p-3 mb-4 category-book-desc-box" style="border-color: orange; background-color: rgba(255, 165, 0, 0.1);">
+                            <p class="text-sm category-book-desc-text" style="color: white;">{{ book.description|truncatewords:30 }}</p>
+                        </div>
                         
                         <div class="flex justify-between items-center mb-4">
-                            <span class="text-2xl font-bold text-blue-600">R{{ book.price }}</span>
+                            <span class="text-2xl font-bold category-book-price" style="color: orange;">R{{ book.price }}</span>
                             {% if book.stock > 0 %}
                                 <span class="text-green-600 ml-2">In Stock ({{ book.stock }})</span>
                             {% else %}
@@ -77,15 +79,15 @@
                         </div>
                         
                         <div class="flex space-x-4">
-                            <a href="{% url 'book_detail' book.pk %}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors duration-300">
+                            <a href="{% url 'book_detail' book.pk %}" class="category-view-btn inline-block font-bold py-2 px-4 rounded-lg text-sm transition-colors duration-300" style="background-color: #4b5563; color: white;">
                                 View Details
                             </a>
                             {% if book.stock > 0 %}
-                                <a href="{% url 'add_to_cart' book.pk %}" class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors duration-300">
+                                <a href="{% url 'add_to_cart' book.pk %}" class="category-cart-btn inline-block font-bold py-2 px-4 rounded-lg text-sm transition-colors duration-300" style="background-color: orange; color: #1e3a8a;">
                                     Add to Cart
                                 </a>
                             {% endif %}
-                            <a href="{% url 'add_to_wishlist' book.pk %}" class="text-red-600 hover:text-red-700 text-2xl transition-colors duration-300 flex flex-col items-center">
+                            <a href="{% url 'add_to_wishlist' book.pk %}" class="category-wishlist-btn text-2xl transition-colors duration-300 flex flex-col items-center" style="color: orange;">
                                 <span>❤️</span>
                                 <span class="text-xs mt-1">wish</span>
                             </a>
@@ -115,4 +117,79 @@
         </div>
     {% endif %}
 </div>
+
+<script>
+    // Apply Books on Shelf styling to category book cards
+    document.addEventListener('DOMContentLoaded', function() {
+        const bookCards = document.querySelectorAll('.category-book-card');
+        
+        bookCards.forEach((card, index) => {
+            // Apply transitions
+            card.style.transition = 'all 0.3s ease-in-out';
+            
+            // Style the wishlist button
+            const wishlistBtn = card.querySelector('.category-wishlist-btn');
+            if (wishlistBtn) {
+                wishlistBtn.style.transition = 'all 0.3s ease-in-out';
+                wishlistBtn.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.2)';
+                    this.querySelector('span:first-child').style.filter = 'drop-shadow(0 0 8px orange)';
+                });
+                wishlistBtn.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                    this.querySelector('span:first-child').style.filter = 'none';
+                });
+            }
+            
+            // Style the View Details button
+            const viewBtn = card.querySelector('.category-view-btn');
+            if (viewBtn) {
+                viewBtn.style.transition = 'all 0.3s ease-in-out';
+                viewBtn.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = '#6b7280';
+                    this.style.transform = 'scale(1.05)';
+                });
+                viewBtn.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = '#4b5563';
+                    this.style.transform = 'scale(1)';
+                });
+            }
+            
+            // Style the Add to Cart button
+            const cartBtn = card.querySelector('.category-cart-btn');
+            if (cartBtn) {
+                cartBtn.style.transition = 'all 0.3s ease-in-out';
+                cartBtn.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = '#ff8c00';
+                    this.style.transform = 'scale(1.05)';
+                });
+                cartBtn.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = 'orange';
+                    this.style.transform = 'scale(1)';
+                });
+            }
+            
+            // Add hover effect to card
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px) scale(1.02)';
+                this.style.boxShadow = '0 20px 40px rgba(255, 165, 0, 0.3)';
+                this.style.borderColor = 'orange';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+                this.style.boxShadow = 'none';
+                this.style.borderColor = '#6b21a8';
+            });
+            
+            // Animate on scroll
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 100 + index * 50);
+        });
+    });
+</script>
 {% endblock %}

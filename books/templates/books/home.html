@@ -105,7 +105,7 @@
 
 <!-- Book Categories Section -->
 <section class="mb-12">
-    <div class="text-center mb-8" style="background-color: #1e3a8a; padding: 1.5rem; border-radius: 0.5rem; border: 3px solid orange;">
+    <div class="text-center mb-8">
         <h2 class="paint-droplets text-3xl font-bold" style="color: orange; font-family: 'Monotype Corsiva', serif;">
             Featured Books
             <span class="droplet-1"></span>
@@ -117,11 +117,11 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <!-- Small Books Category -->
         <div class="text-center">
-            <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow duration-300" style="border: 3px solid skyblue;">
+            <div id="small-books-container" class="category-container bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-all duration-300 cursor-pointer" style="border: 3px solid skyblue;" onclick="toggleContainerColor(this, '#3b82f6', '#1e3a8a')">
                 <div class="text-6xl mb-4">📖</div>
                 <h3 class="text-2xl font-bold mb-4" style="color: #1e3a8a;">Small Books</h3>
                 <p class="text-gray-600 mb-6">Compact and portable books perfect for quick reading and travel</p>
-                <a href="/category/small_books/" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300" style="background-color: #1e3a8a;">
+                <a href="/category/small_books/" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300" style="background-color: #1e3a8a;" onclick="event.stopPropagation();">
                     Browse Small Books
                 </a>
             </div>
@@ -129,11 +129,11 @@
         
         <!-- Charts Category -->
         <div class="text-center">
-            <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow duration-300" style="border: 3px solid skyblue;">
+            <div id="charts-container" class="category-container bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-all duration-300 cursor-pointer" style="border: 3px solid skyblue;" onclick="toggleContainerColor(this, '#22c55e', '#15803d')">
                 <div class="text-6xl mb-4">📊</div>
                 <h3 class="text-2xl font-bold mb-4" style="color: #1e3a8a;">Charts</h3>
                 <p class="text-gray-600 mb-6">Educational charts and diagrams for learning and reference</p>
-                <a href="/category/charts/" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300" style="background-color: #1e3a8a;">
+                <a href="/category/charts/" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300" style="background-color: #1e3a8a;" onclick="event.stopPropagation();">
                     Browse Charts
                 </a>
             </div>
@@ -141,11 +141,11 @@
         
         <!-- Big Books Category -->
         <div class="text-center">
-            <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow duration-300" style="border: 3px solid skyblue;">
+            <div id="big-books-container" class="category-container bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-all duration-300 cursor-pointer" style="border: 3px solid skyblue;" onclick="toggleContainerColor(this, '#a855f7', '#6b21a8')">
                 <div class="text-6xl mb-4">📚</div>
                 <h3 class="text-2xl font-bold mb-4" style="color: #1e3a8a;">Big Books</h3>
                 <p class="text-gray-600 mb-6">Large format books ideal for classroom use and group reading</p>
-                <a href="/category/big_books/" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300" style="background-color: #1e3a8a;">
+                <a href="/category/big_books/" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300" style="background-color: #1e3a8a;" onclick="event.stopPropagation();">
                     Browse Big Books
                 </a>
             </div>
@@ -155,10 +155,11 @@
 
 {% if featured_books %}
 <section class="mb-12">
-    <div class="text-center mb-8" style="background-color: #7c3aed; padding: 1.5rem; border-radius: 0.5rem; border: 3px solid orange;">
-        <h2 class="text-3xl font-bold text-white" style="color: orange; font-family: 'Monotype Corsiva', 'Times New Roman', cursive; font-size: 2.5rem; letter-spacing: 2px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Books on Shelf</h2>
+    <div class="text-center mb-4 cursor-pointer" id="books-on-shelf-header" style="background-color: #7c3aed; padding: 1.5rem; border-radius: 0.5rem; border: 3px solid orange; transition: all 0.3s ease;">
+        <h2 class="text-3xl font-bold text-white" style="color: orange; font-family: 'Monotype Corsiva', 'Times New Roman', cursive; font-size: 2.5rem; letter-spacing: 2px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">📚 Books on Shelf</h2>
+        <p class="text-white mt-2 text-sm">Click to view books</p>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div id="books-on-shelf-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" style="display: none; opacity: 0; transition: opacity 0.5s ease;">
         {% for book in featured_books %}
         <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300" style="border: 2px solid skyblue;">
             {% if book.cover_image %}
@@ -228,6 +229,72 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Books on Shelf toggle functionality
+    const booksOnShelfHeader = document.getElementById('books-on-shelf-header');
+    const booksOnShelfGrid = document.getElementById('books-on-shelf-grid');
+    
+    if (booksOnShelfHeader && booksOnShelfGrid) {
+        let isExpanded = false;
+        
+        booksOnShelfHeader.addEventListener('click', function() {
+            isExpanded = !isExpanded;
+            
+            if (isExpanded) {
+                booksOnShelfGrid.style.display = 'grid';
+                setTimeout(() => {
+                    booksOnShelfGrid.style.opacity = '1';
+                }, 10);
+                booksOnShelfHeader.querySelector('p').textContent = 'Click to hide books';
+                booksOnShelfHeader.style.backgroundColor = '#5b21b6';
+            } else {
+                booksOnShelfGrid.style.opacity = '0';
+                setTimeout(() => {
+                    booksOnShelfGrid.style.display = 'none';
+                }, 500);
+                booksOnShelfHeader.querySelector('p').textContent = 'Click to view books';
+                booksOnShelfHeader.style.backgroundColor = '#7c3aed';
+            }
+        });
+        
+        // Hover effect on header
+        booksOnShelfHeader.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.02)';
+            this.style.boxShadow = '0 10px 30px rgba(255, 165, 0, 0.4)';
+        });
+        
+        booksOnShelfHeader.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+            this.style.boxShadow = 'none';
+        });
+    }
+    
+    // Category container color toggle function
+    window.toggleContainerColor = function(container, colorLight, colorDark) {
+        const isColored = container.getAttribute('data-colored') === 'true';
+        const heading = container.querySelector('h3');
+        const paragraph = container.querySelector('p');
+        
+        if (!isColored) {
+            // Apply color
+            container.style.backgroundColor = colorLight;
+            container.style.borderColor = colorDark;
+            if (heading) heading.style.color = 'white';
+            if (paragraph) paragraph.style.color = 'white';
+            container.setAttribute('data-colored', 'true');
+            container.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                container.style.transform = 'scale(1)';
+            }, 200);
+        } else {
+            // Revert to original
+            container.style.backgroundColor = 'white';
+            container.style.borderColor = 'skyblue';
+            if (heading) heading.style.color = '#1e3a8a';
+            if (paragraph) paragraph.style.color = '#4b5563';
+            container.setAttribute('data-colored', 'false');
+        }
+    };
+    
     // Style Featured Books Category Containers
     const categoryContainers = document.querySelectorAll('.grid.grid-cols-1.md\\:grid-cols-3.gap-8 > .text-center > div');
     

@@ -332,16 +332,29 @@
             </div>
             
             <!-- Chat Messages -->
-            <div id="chat-messages" class="chat-messages" style="border: 2px solid #1e3a8a; margin: 10px; border-radius: 8px;">
-                <div class="chat-bubble bot-message">
-                    👋 Hello! Welcome to Penreach Bookshop! I'm here to help you with:
-                    <br><br>
-                    📚 Finding books<br>
-                    🛒 Placing orders<br>
-                    📦 Delivery information<br>
-                    💳 Payment questions<br>
-                    📞 Customer service<br><br>
-                    How can I assist you today?
+            <div id="chat-messages" class="chat-messages" style="border: 2px solid #1e3a8a; margin: 10px; border-radius: 8px; background-color: #f8fafc;">
+                <div class="chat-bubble bot-message" style="background-color: #1e3a8a; color: white;">
+                    👋 <strong>Welcome to Penreach Bookshop!</strong><br><br>
+                    I'm your personal assistant here to help you with:<br><br>
+                    📚 <strong>Finding Books</strong> - Search by title, author, or category<br>
+                    🛒 <strong>Placing Orders</strong> - Easy checkout process<br>
+                    � <strong>Delivery</strong> - Free delivery & store pickup<br>
+                    💳 <strong>Payments</strong> - Card, EFT, or cash<br>
+                    📦 <strong>Order Tracking</strong> - Know where your books are<br>
+                    � <strong>Support</strong> - We're here to help!<br><br>
+                    <em>What can I help you with today?</em>
+                </div>
+                
+                <!-- Quick Action Buttons -->
+                <div id="quick-actions" style="padding: 10px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
+                    <button onclick="sendQuickMessage('How do I order books?')" class="quick-btn" style="background: #e0e7ff; color: #1e3a8a; border: 1px solid #1e3a8a; border-radius: 20px; padding: 6px 12px; font-size: 12px; cursor: pointer; transition: all 0.3s;">🛒 How to Order</button>
+                    <button onclick="sendQuickMessage('What are your delivery options?')" class="quick-btn" style="background: #e0e7ff; color: #1e3a8a; border: 1px solid #1e3a8a; border-radius: 20px; padding: 6px 12px; font-size: 12px; cursor: pointer; transition: all 0.3s;">� Delivery Info</button>
+                    <button onclick="sendQuickMessage('Tell me about small books')" class="quick-btn" style="background: #e0e7ff; color: #1e3a8a; border: 1px solid #1e3a8a; border-radius: 20px; padding: 6px 12px; font-size: 12px; cursor: pointer; transition: all 0.3s;">📖 Small Books</button>
+                    <button onclick="sendQuickMessage('Tell me about charts')" class="quick-btn" style="background: #e0e7ff; color: #1e3a8a; border: 1px solid #1e3a8a; border-radius: 20px; padding: 6px 12px; font-size: 12px; cursor: pointer; transition: all 0.3s;">📊 Charts</button>
+                    <button onclick="sendQuickMessage('Tell me about big books')" class="quick-btn" style="background: #e0e7ff; color: #1e3a8a; border: 1px solid #1e3a8a; border-radius: 20px; padding: 6px 12px; font-size: 12px; cursor: pointer; transition: all 0.3s;">📚 Big Books</button>
+                    <button onclick="sendQuickMessage('What payment methods do you accept?')" class="quick-btn" style="background: #e0e7ff; color: #1e3a8a; border: 1px solid #1e3a8a; border-radius: 20px; padding: 6px 12px; font-size: 12px; cursor: pointer; transition: all 0.3s;">💳 Payments</button>
+                    <button onclick="sendQuickMessage('How can I contact you?')" class="quick-btn" style="background: #e0e7ff; color: #1e3a8a; border: 1px solid #1e3a8a; border-radius: 20px; padding: 6px 12px; font-size: 12px; cursor: pointer; transition: all 0.3s;">📞 Contact Us</button>
+                    <button onclick="sendQuickMessage('Help')" class="quick-btn" style="background: #fef3c7; color: #92400e; border: 1px solid #f59e0b; border-radius: 20px; padding: 6px 12px; font-size: 12px; cursor: pointer; transition: all 0.3s;">❓ Help</button>
                 </div>
             </div>
             
@@ -857,7 +870,108 @@ Add a gift note at checkout!`,
 📦 Order tracking
 🔄 Returns & refunds
 📞 Contact info: +27(0)13 758 9000
-What would you like to know?`
+
+Try clicking the quick buttons below or type your question!`,
+            
+            // Additional Help Topics
+            'how to use': `🤖 How to use this chatbot:
+• Click any quick button below for instant answers
+• Type your question in the text box
+• Ask about books, orders, delivery, payments, or support
+• I'll do my best to help you!`,
+            'chatbot': `🤖 I'm your Penreach Bookshop Assistant! I can help you:
+• Find the perfect books
+• Understand ordering process
+• Learn about delivery options
+• Get payment information
+• Answer any questions about our shop
+
+What would you like to know?`,
+            'assistant': `🤖 I'm your personal Bookshop Assistant! I know everything about:
+• Our book categories (Small Books, Charts, Big Books)
+• How to place orders
+• Delivery and collection options
+• Payment methods
+• Store information
+• Customer support
+
+How can I help you today?`,
+            'what can you do': `🤖 I can help you with:
+✅ Finding books by category, title, or author
+✅ Explaining the ordering process step-by-step
+✅ Delivery options and timeframes
+✅ Payment methods we accept
+✅ Return and refund policies
+✅ Store location and contact details
+✅ Order tracking and status
+✅ Technical support
+
+Just ask or click a button below!`,
+            'commands': `Available commands:
+• "small books" - Learn about compact books
+• "charts" - Educational charts info
+• "big books" - Large format books
+• "order" - How to place an order
+• "delivery" - Delivery options
+• "payment" - Payment methods
+• "contact" - Contact information
+• "return" - Return policy
+• "help" - Show all help topics`,
+            
+            // Book Recommendations
+            'age': `📚 Books by age group:
+• Young children (3-7): Big Books with large illustrations
+• School age (8-12): Small Books for independent reading
+• Teenagers: Charts for study aids, Small Books for novels
+• Adults: All categories available!`,
+            'age group': `📚 We have books for all ages:
+• Toddlers/Preschool: Big Books (large pictures, durable)
+• Primary School: Small Books (portable), Charts (learning aids)
+• High School: Charts (study materials), Small Books
+• Adults: All categories including reference materials`,
+            'preschool': `📚 For preschool children, we recommend:
+• Big Books - Large colorful illustrations, durable for small hands
+• Charts - Alphabet, numbers, colors, shapes
+Perfect for early learning!`,
+            'primary school': `📚 For primary school students:
+• Small Books - Easy to carry in backpacks
+• Charts - Math, science, geography aids
+• Big Books - For classroom reading time
+Great for homework and learning!`,
+            'high school': `📚 For high school students:
+• Charts - Biology, chemistry, physics diagrams
+• Geography maps and historical timelines
+• Small Books - Novels and reference materials
+Excellent study aids!`,
+            'university': `📚 For university/college students:
+• Charts - Scientific diagrams, anatomical charts
+• Small Books - Text references and study guides
+Contact us for bulk academic orders!`,
+            
+            // Special Features
+            'analytics': '📊 Our website tracks visitor statistics to improve your experience. You can view our analytics dashboard for insights into popular books and visitor activity.',
+            'visitor stats': '📊 We monitor website traffic to understand which books are popular and improve our service. This helps us stock the books you want most!',
+            'mobile': `📱 Our website works great on mobile devices!
+• Browse books on your phone
+• Add to cart and checkout easily
+• Track orders on-the-go
+• The hamburger menu (☰) gives you quick access to all features`,
+            'app': `📱 We don't have a dedicated app yet, but our website is fully mobile-responsive! Access penreachbookshop.co.za from any smartphone or tablet for the best experience.`,
+            
+            // Urgent/Important
+            'urgent': `🚨 For urgent matters:
+• Call us: +27(0)13 758 9000
+• Visit our store: Boschrand Farm, R40, Nelspruit
+• Email: penreach@penreach.co.za
+We're here to help quickly!`,
+            'emergency': `🚨 For emergencies or urgent orders:
+Call us directly: +27(0)13 758 9000
+Or visit our store during business hours.`,
+            'complaint': `😔 We're sorry to hear you're having an issue. Please contact us directly:
+📞 Phone: +27(0)13 758 9000
+📧 Email: penreach@penreach.co.za
+We'll resolve your concern as quickly as possible.`,
+            'feedback': `💬 We'd love your feedback! Please email us at penreach@penreach.co.za with your suggestions or comments. Your input helps us improve!`
         };
 
         function addMessage(message, isUser = false) {
@@ -917,6 +1031,17 @@ What would you like to know?`
                 chatInput.value = '';
             }
         }
+
+        // Function for quick action buttons
+        window.sendQuickMessage = function(message) {
+            addMessage(message, true);
+            
+            // Simulate bot thinking
+            setTimeout(() => {
+                const response = getBotResponse(message);
+                addMessage(response);
+            }, 1000);
+        };
 
         // Send message on button click
         chatSend.addEventListener('click', sendMessage);
